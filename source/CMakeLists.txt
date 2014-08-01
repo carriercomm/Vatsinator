@@ -92,6 +92,18 @@ else (WIN32)
   
   # disable VBO on Win32 build - MinGW doesn't handle it properly
   set (CONFIG_NO_VBO 1)
+else (ANDROID)
+    set (vatsinator_PREFIX "")
+
+    set (vatsinator_LIBS
+        Qt5::Widgets
+        Qt5::Network
+        Qt5::Xml
+        Qt5::OpenGL
+        ${OPENGL_LIBRARY}
+        ${QUAZIP_LIBRARIES}
+        ${QJSON_LIBRARIES}
+    )
 endif (LINUX)
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/vatsinator-config.h.in

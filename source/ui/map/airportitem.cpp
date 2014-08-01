@@ -17,6 +17,12 @@
  *
  */
 
+#include <QtGlobal>
+
+#ifdef Q_OS_ANDROID
+# include <GLES/gl.h>
+#endif
+
 #include "db/airportdatabase.h"
 #include "glutils/texture.h"
 #include "storage/settingsmanager.h"
@@ -62,7 +68,9 @@ AirportItem::drawIcon() const {
     -0.04, -0.02,
     -0.04,  0.06,
      0.04,  0.06,
-     0.04, -0.02
+     0.04,  0.06,
+     0.04, -0.02,
+     -0.04, -0.02
   };
   
   if (!__icon)
@@ -70,7 +78,7 @@ AirportItem::drawIcon() const {
   
   __icon->bind();
   glVertexPointer(2, GL_FLOAT, 0, iconRect);
-  glDrawArrays(GL_QUADS, 0, 4);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   __icon->unbind();
 }
 
@@ -80,7 +88,9 @@ AirportItem::drawLabel() const {
     -0.08, -0.05333333,
     -0.08,  0,
      0.08,  0,
-     0.08, -0.05333333
+     0.08,  0,
+     0.08, -0.05333333,
+     -0.08, -0.05333333
   };
   
   if (!__label)
@@ -88,7 +98,7 @@ AirportItem::drawLabel() const {
   
   __label->bind();
   glVertexPointer(2, GL_FLOAT, 0, labelRect);
-  glDrawArrays(GL_QUADS, 0, 4);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   __label->unbind();
 }
 
@@ -117,9 +127,16 @@ AirportItem::drawLines() const {
             1.0);
     
     glVertexPointer(2, GL_FLOAT, 0, __ptdLines.coords.constData());
+    
+#ifndef Q_OS_ANDROID
     glLineStipple(3, 0xF0F0); // dashed line
+#endif
+    
     glDrawArrays(GL_LINE_STRIP, 0, __ptdLines.coords.size() / 2);
+    
+#ifndef Q_OS_ANDROID
     glLineStipple(1, 0xFFFF);
+#endif
 }
 
 bool

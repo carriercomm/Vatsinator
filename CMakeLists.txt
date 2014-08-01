@@ -24,6 +24,13 @@ if (POLICY CMP0028)
   cmake_policy (SET CMP0028 NEW)
 endif (POLICY CMP0028)
 
+if (MINGW)
+    set (WIN32 1)
+endif (MINGW)
+if (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
+    set (LINUX 1)
+endif (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
+
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules)
 
 find_package (Qt5Core REQUIRED)
@@ -31,9 +38,13 @@ find_package (Qt5Widgets REQUIRED)
 find_package (Qt5OpenGL REQUIRED)
 find_package (Qt5Xml REQUIRED)
 find_package (Qt5Network REQUIRED)
-find_package (OpenGL REQUIRED)
 find_package (QuaZip REQUIRED)
 find_package (QJSON REQUIRED)
+
+# if (NOT ANDROID)
+  find_package (OpenGL REQUIRED)
+# endif (NOT ANDROID)
+
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 include_directories(${Qt5Core_INCLUDE_DIRS})
@@ -41,20 +52,13 @@ include_directories(${Qt5Widgets_INCLUDE_DIRS})
 include_directories(${Qt5OpenGL_INCLUDE_DIRS})
 include_directories(${Qt5Network_INCLUDE_DIRS})
 include_directories(${Qt5Xml_INCLUDE_DIRS})
-
-if (UNIX AND NOT APPLE AND NOT MINGW)
-    set (LINUX 1)
-endif (UNIX AND NOT APPLE AND NOT MINGW)
+include_directories(${QJSON_INCLUDE_DIR})
 
 if (MINGW AND CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
     # Cmake adds -rdynamic to compiler flags.
     # As mingw doesn't know rdynamic, we want to remove this.
     string (REPLACE "-rdynamic" "" CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS ${CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS})
 endif (MINGW AND CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
-
-if (MINGW)
-    set (WIN32 1)
-endif (MINGW)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
@@ -87,7 +91,8 @@ if (NOT vatsinator_VERSION)
 endif (NOT vatsinator_VERSION)
 
 include (VatsinatorInstall)
-add_subdirectory(resources)
+add_subdirectory (resources)
+add_subdirectory (dist)
 
 # Platform-specific actions
 if (LINUX)
@@ -103,8 +108,6 @@ if (LINUX)
 
     # Spec file
     option (WITH_RPM OFF)
-    
-    add_subdirectory (dist)
 
 elseif (APPLE)
     
@@ -153,6 +156,18 @@ elseif (WIN32)
     
     # Awesome NSIS packaging
     include (Packaging-win32)
+
+elseif (ANDROID)
+
+  find_program(ANT_LOCATION NAMES ant)
+  if (NOT ANT_LOCATION)
+    message(FATAL_ERROR "Could not find ant. Please install ant and add it to the search path.")
+  endif (NOT ANT_LOCATION)
+  
+  find_program(ANDROID_LOCATION NAMES android android.bat)
+  if (NOT ANDROID_LOCATION)
+    message(FATAL_ERROR "Could not find 'Android SDK and AVD Manager'. Please install the android sdk and add the <android-sdk>/tools directory to the search path.")
+  endif (NOT ANDROID_LOCATION)
     
 endif (LINUX)
 
@@ -177,6 +192,8 @@ elseif (APPLE)
     message (STATUS " * platform: Apple")
 elseif (WIN32)
     message (STATUS " * platform: Win32")
+elseif (ANDROID)
+    message (STATUS " * platform: Android")
 else (LINUX)
     message (STATUS " * platform: Undefined")
 endif (LINUX)

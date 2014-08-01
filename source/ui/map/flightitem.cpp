@@ -19,6 +19,10 @@
 
 #include <QtCore>
 
+#ifdef Q_OS_ANDROID
+# include <GLES/gl.h>
+#endif
+
 #include "db/airportdatabase.h"
 #include "glutils/texture.h"
 #include "modules/modelmatcher.h"
@@ -60,7 +64,9 @@ FlightItem::drawModel() const {
     -0.03, -0.03,
     -0.03,  0.03,
      0.03,  0.03,
-     0.03, -0.03
+     0.03,  0.03,
+     0.03, -0.03,
+    -0.03, -0.03
   };
   
   if (!__model)
@@ -70,7 +76,7 @@ FlightItem::drawModel() const {
     glRotatef(static_cast<GLfloat>(data()->heading()), 0, 0, -1);
     glVertexPointer(2, GL_FLOAT, 0, modelRect);
     __model->bind();
-    glDrawArrays(GL_QUADS, 0, 4);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
   glPopMatrix();
 }
 
@@ -80,7 +86,9 @@ FlightItem::drawLabel() const {
     -0.16,  0.019,
     -0.16,  0.12566666,
      0.16,  0.12566666,
-     0.16,  0.019
+     0.16,  0.12566666,
+     0.16,  0.019,
+    -0.16,  0.019
   };
   
   if (!__label)
@@ -88,7 +96,7 @@ FlightItem::drawLabel() const {
   
   __label->bind();
   glVertexPointer(2, GL_FLOAT, 0, labelRect);
-  glDrawArrays(GL_QUADS, 0, 4);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   __label->unbind();
 }
 
@@ -120,9 +128,16 @@ FlightItem::drawLines(LineTypes types) const {
               1.0);
     
     glVertexPointer(2, GL_FLOAT, 0, __ptdLine.coords.constData());
+    
+#ifndef Q_OS_ANDROID
     glLineStipple(3, 0xF0F0); // dashed line
+#endif
+    
     glDrawArrays(GL_LINE_STRIP, 0, __ptdLine.coords.size() / 2);
+    
+#ifndef Q_OS_ANDROID
     glLineStipple(1, 0xFFFF);
+#endif
   }
 }
 

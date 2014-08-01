@@ -21,6 +21,11 @@
 #include <QtWidgets>
 #include <QtOpenGL>
 
+#ifdef Q_OS_ANDROID
+# include <GLES/gl.h>
+#endif
+
+
 #include "events/mapevent.h"
 #include "events/mouselonlatevent.h"
 #include "glutils/glextensions.h"
@@ -46,6 +51,11 @@
 
 #ifndef GL_MULTISAMPLE
 # define GL_MULTISAMPLE 0x809D
+#endif
+
+#if (defined Q_OS_ANDROID)
+# define glTranslated glTranslatef
+# define glOrtho      glOrthof
 #endif
 
 MapWidget::MapWidget(QWidget* _parent) :
@@ -146,14 +156,19 @@ MapWidget::redraw() {
 
 void
 MapWidget::initializeGL() {
+#if !(defined Q_OS_ANDROID)
   initGLExtensionsPointers();
+#endif
   emit glReady();
   
   __world = new WorldPolygon();
   __scene = new MapScene(this);
   
   glEnable(GL_MULTISAMPLE);
+
+#if !(defined Q_OS_ANDROID)
   glEnable(GL_LINE_STIPPLE);
+#endif
   
   glShadeModel(GL_SMOOTH);
   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -181,7 +196,9 @@ MapWidget::paintGL() {
     0.0, 0.0,
     0.0, 1.0,
     1.0, 1.0,
-    1.0, 0.0
+    1.0, 1.0,
+    1.0, 0.0,
+    0.0, 0.0
   };
   
   glMatrixMode(GL_PROJECTION);

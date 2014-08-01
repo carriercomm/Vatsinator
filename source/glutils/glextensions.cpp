@@ -23,16 +23,16 @@
 #include <QGLContext>
 
 #include "config.h"
-#if defined Q_OS_LINUX
+#if defined Q_OS_LINUX && !(defined Q_OS_ANDROID)
 # include <GL/glx.h>
 #elif defined Q_OS_WIN32
 # include <windows.h>
 # include <wingdi.h>
-#elif defined Q_OS_DARWIN
+#elif defined Q_OS_MAC
 # include <OpenGL/glext.h>
 #endif
 
-#ifndef Q_WS_MAC // apple's impelementation already knows these extensions
+#if !(defined Q_OS_MAC || defined Q_OS_ANDROID)
 
 typedef ptrdiff_t GLsizeiptr;
 typedef ptrdiff_t GLintptr;
@@ -76,5 +76,5 @@ initGLExtensionsPointers() {
 #undef init_ext
 }
 
-#endif // Q_WS_MAC
+#endif // !(defined Q_OS_MAC || defined Q_OS_ANDROID)
 

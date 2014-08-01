@@ -23,7 +23,7 @@
 #include <cstddef>
 #include <QtOpenGL>
 
-#ifndef Q_WS_MAC
+#if !(defined Q_OS_MAC || defined Q_OS_ANDROID)
 #define GL_STATIC_DRAW 0x88E4
 #define GL_ARRAY_BUFFER 0x8892
 #define GL_ELEMENT_ARRAY_BUFFER 0x8893
@@ -38,7 +38,7 @@ extern void (* glDeleteBuffers) (GLsizei, const GLuint*);
 extern void (* glGenBuffers)    (GLsizei, GLuint*);
 
 void initGLExtensionsPointers();
-#endif // Q_WS_MAC
+#endif // !(defined Q_OS_MAC || defined Q_OS_ANDROID)
 
 
 #endif // GLEXTENSIONS_H

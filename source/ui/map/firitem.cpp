@@ -17,6 +17,12 @@
  *
  */
 
+#include <QtGlobal>
+
+#ifdef Q_OS_ANDROID
+# include <GLES/gl.h>
+#endif
+
 #include "db/firdatabase.h"
 #include "glutils/texture.h"
 #include "glutils/vertexbufferobject.h"
@@ -84,7 +90,9 @@ FirItem::drawLabel() const {
     -0.08, -0.05333333,
     -0.08,  0.05333333,
      0.08,  0.05333333,
-     0.08, -0.05333333
+     0.08,  0.05333333,
+     0.08, -0.05333333,
+     -0.08, -0.05333333
   };
   
   if (!__label)
@@ -92,7 +100,7 @@ FirItem::drawLabel() const {
   
   __label->bind();
   glVertexPointer(2, GL_FLOAT, 0, labelRect);
-  glDrawArrays(GL_QUADS, 0, 4);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
   __label->unbind();
 }
 
