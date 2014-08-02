@@ -100,6 +100,8 @@ namespace {
       default:
         return "Mac OS X";
     }
+#elif defined Q_OS_ANDROID
+    return "Android";
 #else
 # warning "Define operating system string here"
     return "Unknown";
