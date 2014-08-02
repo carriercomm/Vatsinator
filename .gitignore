@@ -24,3 +24,7 @@ dist/maketarball.sh
 
 # QtCreator stuff
 CMakeLists.txt.user
+
+# Android toolchain auto-generated directory
+libs
+

@@ -11,5 +11,8 @@ macro (vatsinator_install INSTALL_FILES INSTALL_DIR)
           configure_file (${f} "${CMAKE_BINARY_DIR}/vatsinator.resources${INSTALL_DIR}/"
                           COPYONLY)
         endforeach (f)
+    elseif (ANDROID)
+        install (FILES ${INSTALL_FILES}
+                 DESTINATION assets${INSTALL_DIR})
     endif (LINUX)
 endmacro (vatsinator_install)

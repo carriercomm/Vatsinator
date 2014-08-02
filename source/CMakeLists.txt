@@ -3,17 +3,6 @@ set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 set (CMAKE_AUTOMOC ON)
 set (CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# exec file
-set (vatsinator_TARGET
-    vatsinator
-)
-
-if (APPLE) # bundle looks better
-  set (vatsinator_TARGET
-      Vatsinator
-  )
-endif (APPLE)
-
 set (vatsinator_SRCS
     netconfig.cpp
     vatsinatorapplication.cpp
@@ -44,10 +33,17 @@ endif (CMAKE_COMPILER_IS_GNUCC)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable (${vatsinator_TARGET}
+if (ANDROID) # on Android we want to build library libvatsinator.so
+  add_library (${vatsinator_TARGET} SHARED
     main.cpp
     ${vatsinator_SRCS}
-)
+  )
+else (ANDROID)
+  add_executable (${vatsinator_TARGET}
+    main.cpp
+    ${vatsinator_SRCS}
+  )
+endif (ANDROID)
 
 # fix for older versions of qjson library
 if (qjson_LIBRARIES)
@@ -76,7 +72,7 @@ elseif (APPLE)
         ${QUAZIP_LIBRARIES}
         ${QJSON_LIBRARIES}
     )
-else (WIN32)
+elseif (WIN32)
     set (vatsinator_PREFIX "")
 
     set (vatsinator_LIBS
@@ -92,7 +88,7 @@ else (WIN32)
   
   # disable VBO on Win32 build - MinGW doesn't handle it properly
   set (CONFIG_NO_VBO 1)
-else (ANDROID)
+elseif (ANDROID)
     set (vatsinator_PREFIX "")
 
     set (vatsinator_LIBS
@@ -111,7 +107,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/vatsinator-config.h.in
 )
 
 foreach (DIR ${vatsinator_SUBDIRS})
-   add_subdirectory (${DIR})
+    add_subdirectory (${DIR})
     add_dependencies (${vatsinator_TARGET}
         ${DIR}
     )
@@ -167,5 +163,9 @@ elseif (APPLE)
 elseif (WIN32)
 
     install (TARGETS ${vatsinator_TARGET} DESTINATION .)
+
+elseif (ANDROID)
+  
+    install (TARGETS ${vatsinator_TARGET} DESTINATION bin)
     
 endif (LINUX)

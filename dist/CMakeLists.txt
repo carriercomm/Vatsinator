@@ -28,5 +28,10 @@ if (LINUX)
   
   # install icons
   add_subdirectory (linux-icons)
+
+elseif (ANDROID)
+
+  # Android deploy scripts
+  add_subdirectory (android)
   
 endif (LINUX)
