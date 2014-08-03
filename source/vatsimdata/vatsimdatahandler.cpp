@@ -768,23 +768,25 @@ VatsimDataHandler::__handleFetchError() {
 
 void
 VatsimDataHandler::__reloadWeatherForecast() {
-  QString desired = SM::get("network.weather_forecast_provider").toString();
-  if (desired != "None") {
-    if (!__weatherForecast || desired != __weatherForecast->providerName()) {
-      QList<WeatherForecastInterface*> weatherPlugins =
-          VatsinatorApplication::getSingleton().plugins()->plugins<WeatherForecastInterface>();
-      for (WeatherForecastInterface* w: weatherPlugins) {
-        if (w->providerName() == desired) {
-          __weatherForecast = w;
-          break;
-        }
-      }
-      Q_ASSERT(__weatherForecast->providerName() == desired);
-      VatsinatorApplication::log("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
-    }
-  } else {
-    __weatherForecast = nullptr;
-  }
+  /* FIXME - causes segfault on Android */
+//   QString desired = SM::get("network.weather_forecast_provider").toString();
+//   if (desired != "None") {
+//     if (!__weatherForecast || desired != __weatherForecast->providerName()) {
+//       QList<WeatherForecastInterface*> weatherPlugins =
+//           VatsinatorApplication::getSingleton().plugins()->plugins<WeatherForecastInterface>();
+//       for (WeatherForecastInterface* w: weatherPlugins) {
+//         if (w->providerName() == desired) {
+//           __weatherForecast = w;
+//           break;
+//         }
+//       }
+//       Q_ASSERT(__weatherForecast->providerName() == desired);
+//       VatsinatorApplication::log("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
+//     }
+//   } else {
+//     __weatherForecast = nullptr;
+//   }
+  __weatherForecast = nullptr;
 }
 
 

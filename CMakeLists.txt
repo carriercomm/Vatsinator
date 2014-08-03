@@ -41,9 +41,9 @@ find_package (Qt5Network REQUIRED)
 find_package (QuaZip REQUIRED)
 find_package (QJSON REQUIRED)
 
-# if (NOT ANDROID)
+if (NOT ANDROID)
   find_package (OpenGL REQUIRED)
-# endif (NOT ANDROID)
+endif (NOT ANDROID)
 
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")

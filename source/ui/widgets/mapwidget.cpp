@@ -64,6 +64,9 @@ MapWidget::MapWidget(QWidget* _parent) :
     __actualZoom(0),
     __world(nullptr),
     __scene(nullptr) {
+
+  setAttribute(Qt::WA_PaintOnScreen);
+  setAttribute(Qt::WA_NoSystemBackground);
   
   connect(VatsimDataHandler::getSingletonPtr(), SIGNAL(vatsimDataUpdated()),
           this,                                 SLOT(redraw()));
@@ -163,28 +166,27 @@ MapWidget::initializeGL() {
   
   __world = new WorldPolygon();
   __scene = new MapScene(this);
-  
-  glEnable(GL_MULTISAMPLE);
 
 #if !(defined Q_OS_ANDROID)
+  glEnable(GL_MULTISAMPLE);
   glEnable(GL_LINE_STIPPLE);
 #endif
   
-  glShadeModel(GL_SMOOTH);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+//   glShadeModel(GL_SMOOTH);
+//   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+//   
+//   glEnable(GL_TEXTURE_2D);
+//   glEnable(GL_DEPTH_TEST);
+//   glEnable(GL_ALPHA_TEST);
+//   glAlphaFunc(GL_GREATER, 0.1f);
+//   glEnable(GL_BLEND);
+//   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0.1f);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+//   glMatrixMode(GL_PROJECTION);
+//   glLoadIdentity();
+//   
+//   glMatrixMode(GL_MODELVIEW);
+//   glLoadIdentity();
   
   /* For a really strong debug */
 //   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -201,48 +203,48 @@ MapWidget::paintGL() {
     0.0, 0.0
   };
   
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-
-  glOrtho(-__rangeX, __rangeX,
-          -__rangeY, __rangeY,
-          -static_cast<GLdouble>(MapConfig::MapLayers::Count), 1.0);
-  
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  
+//   glMatrixMode(GL_PROJECTION);
+//   glLoadIdentity();
+// 
+//   glOrtho(-__rangeX, __rangeX,
+//           -__rangeY, __rangeY,
+//           -static_cast<GLdouble>(MapConfig::MapLayers::Count), 1.0);
+//   
+//   glMatrixMode(GL_MODELVIEW);
+//   glLoadIdentity();
+//   
   qglColor(__settings.colors.seas);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, 0, textureCoords);
-  
+//   
+//   glEnableClientState(GL_VERTEX_ARRAY);
+//   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+//   glTexCoordPointer(2, GL_FLOAT, 0, textureCoords);
+//   
   qglClearColor(__settings.colors.seas);
-  
-  __underMouse = nullptr;
-  
-  glBindTexture(GL_TEXTURE_2D, 0);
-  
-  for (GLfloat o: __offsets) {
-    __xOffset = o;
-    
-    __drawWorld();
-    __drawUirs();
-    __drawFirs();
-    __drawAirports();
-    __drawPilots();
-  }
-  
-  for (GLfloat o: __offsets) {
-    __xOffset = o;
-    __drawLines();
-  }
-  
-  __xOffset = 0.0f;
-  
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
+//   
+//   __underMouse = nullptr;
+//   
+//   glBindTexture(GL_TEXTURE_2D, 0);
+//   
+//   for (GLfloat o: __offsets) {
+//     __xOffset = o;
+//     
+//     __drawWorld();
+//     __drawUirs();
+//     __drawFirs();
+//     __drawAirports();
+//     __drawPilots();
+//   }
+//   
+//   for (GLfloat o: __offsets) {
+//     __xOffset = o;
+//     __drawLines();
+//   }
+//   
+//   __xOffset = 0.0f;
+//   
+//   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+//   glDisableClientState(GL_VERTEX_ARRAY);
   
   if (__underMouse) {
     setCursor(QCursor(Qt::PointingHandCursor));
@@ -611,11 +613,13 @@ MapWidget::__updateZoom(int _steps) {
 
 void
 MapWidget::__updateTooltip() {
+#if !(defined Q_OS_ANDROID)
    if (!__underMouse) {
     QToolTip::hideText();
    } else {
      QToolTip::showText(mapToGlobal(__mousePosition.screenPosition()), __underMouse->tooltipText());
    }
+#endif
 }
 
 void

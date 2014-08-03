@@ -74,5 +74,5 @@ GlResourceManager::loadImage(const QString& _fName) {
 
 void
 GlResourceManager::deleteImage(GLuint _img) {
-  glDeleteTextures(1, &_img);
+//   glDeleteTextures(1, &_img);
 }

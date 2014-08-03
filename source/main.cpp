@@ -22,6 +22,9 @@
 #include "config.h"
 
 int main(int argc, char** argv) {
+  Q_INIT_RESOURCE(imgs);
+  Q_INIT_RESOURCE(weather);
+  
   QApplication::setApplicationName("Vatsinator");
   QApplication::setOrganizationName("VatsinatorTeam");
   QApplication::setApplicationVersion(VATSINATOR_VERSION);
