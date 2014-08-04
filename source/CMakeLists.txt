@@ -100,6 +100,7 @@ elseif (ANDROID)
         ${QJSON_LIBRARIES}
         EGL
         GLESv1_CM
+        GLESv2
     )
 endif (LINUX)
 
