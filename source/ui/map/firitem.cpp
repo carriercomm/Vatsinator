@@ -19,10 +19,6 @@
 
 #include <QtCore>
 
-#ifdef Q_OS_ANDROID
-# include <GLES/gl.h>
-#endif
-
 #include "db/firdatabase.h"
 #include "glutils/glextensions.h"
 #include "glutils/texture.h"

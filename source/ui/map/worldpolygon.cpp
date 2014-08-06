@@ -19,11 +19,6 @@
 
 #include <QtGlobal>
 
-#ifdef Q_OS_ANDROID
-# include <GLES/gl.h>
-#endif
-
-
 #include "db/worldmap.h"
 
 #include "glutils/glextensions.h"

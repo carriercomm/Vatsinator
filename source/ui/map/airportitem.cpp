@@ -19,10 +19,6 @@
 
 #include <QtGlobal>
 
-#ifdef Q_OS_ANDROID
-# include <GLES/gl.h>
-#endif
-
 #include "db/airportdatabase.h"
 #include "storage/settingsmanager.h"
 #include "ui/actions/actionmenuseparator.h"
@@ -150,15 +146,9 @@ AirportItem::drawLines() const {
     
     glVertexPointer(2, GL_FLOAT, 0, __ptdLines.coords.constData());
     
-#ifndef Q_OS_ANDROID
     glLineStipple(3, 0xF0F0); // dashed line
-#endif
-    
     glDrawArrays(GL_LINE_STRIP, 0, __ptdLines.coords.size() / 2);
-    
-#ifndef Q_OS_ANDROID
     glLineStipple(1, 0xFFFF);
-#endif
 }
 
 bool
