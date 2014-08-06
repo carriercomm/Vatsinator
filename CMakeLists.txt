@@ -90,6 +90,15 @@ if (NOT vatsinator_VERSION)
     endif (NOT "${GIT_SHA1}" STREQUAL "GITDIR-NOTFOUND")
 endif (NOT vatsinator_VERSION)
 
+# specify user interface implementation
+if (NOT vatsinator_UI_IMPLEMENTATION)
+  if (WIN32 OR LINUX OR APPLE) # use QtWidgets for desktop
+    set (vatsinator_UI_IMPLEMENTATION "widgets")
+  elseif (ANDROID) # use QtQuick for mobile
+    set (vatsinator_UI_IMPLEMENTATION "quick")
+  endif (WIN32 OR LINUX OR APPLE)
+endif (NOT vatsinator_UI_IMPLEMENTATION)
+
 if (ANDROID)
     set (vatsinator_ANDROID_APK ${CMAKE_BINARY_DIR}/vatsinator.apk)
     set (CMAKE_INSTALL_PREFIX ${vatsinator_ANDROID_APK})

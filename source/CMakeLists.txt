@@ -104,6 +104,12 @@ elseif (ANDROID)
     )
 endif (LINUX)
 
+if (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
+  set (UI_IMPLEMENTATION "WidgetsUserInterface")
+else (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
+  message(FATAL_ERROR "Known user interface implementations: widgets")
+endif (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
+
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/vatsinator-config.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/config.h
 )

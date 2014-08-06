@@ -30,6 +30,7 @@
 #include "ui/pages/miscellaneouspage.h"
 #include "ui/windows/vatsinatorwindow.h"
 #include "ui/userinterface.h"
+#include "ui/widgetsuserinterface.h"
 #include "storage/cachefile.h"
 #include "storage/pluginmanager.h"
 #include "storage/settingsmanager.h"
@@ -73,18 +74,22 @@ VatsimDataHandler::VatsimDataHandler(QObject* _parent) :
     __notamProvider(nullptr),
     __weatherForecast(nullptr) {
   
-  connect(VatsinatorApplication::getSingletonPtr(), SIGNAL(uiCreated()),
-          this,                                     SLOT(__slotUiCreated()));
-  connect(__downloader,                             SIGNAL(finished(QString)),
-          this,                                     SLOT(__dataFetched(QString)));
-  connect(__downloader,                             SIGNAL(error()),
-          this,                                     SLOT(__handleFetchError()));
-  connect(__scheduler,                              SIGNAL(timeToUpdate()),
-          this,                                     SLOT(requestDataUpdate()));
-  connect(this,                                     SIGNAL(localDataBad(QString)),
-          UserInterface::getSingletonPtr(),         SLOT(warning(QString)));
-  connect(SettingsManager::getSingletonPtr(),       SIGNAL(settingsChanged()),
-          this,                                     SLOT(__reloadWeatherForecast()));
+  connect(vApp()->userInterface(),              SIGNAL(initialized()),
+          this,                                 SLOT(__slotUiCreated()));
+  connect(__downloader,                         SIGNAL(finished(QString)),
+          this,                                 SLOT(__dataFetched(QString)));
+  connect(__downloader,                         SIGNAL(error()),
+          this,                                 SLOT(__handleFetchError()));
+  connect(__scheduler,                          SIGNAL(timeToUpdate()),
+          this,                                 SLOT(requestDataUpdate()));
+  connect(this,                                 SIGNAL(localDataBad(QString)),
+          vApp()->userInterface(),              SLOT(warning(QString)));
+  connect(this,                                 SIGNAL(vatsimStatusError()),
+          vApp()->userInterface(),              SLOT(statusError()));
+  connect(this,                                 SIGNAL(vatsimDataError()),
+          vApp()->userInterface(),              SLOT(dataError()));
+  connect(SettingsManager::getSingletonPtr(),   SIGNAL(settingsChanged()),
+          this,                                 SLOT(__reloadWeatherForecast()));
   
   connect(this, SIGNAL(vatsimDataDownloading()), SLOT(__beginDownload()));
   
@@ -142,7 +147,7 @@ VatsimDataHandler::parseStatusFile(const QString& _statusFile) {
       } else if (key == "url0") {
         __dataServers << value;
       } else if (key == "msg0") {
-        UserInterface::getSingleton().showVatsimMessage(value);
+        vApp()->userInterface()->showVatsimMessage(value);
       }
     }
   }
@@ -720,7 +725,10 @@ VatsimDataHandler::__slotUiCreated() {
   if (SM::get("network.cache_enabled").toBool() == true)
     __loadCachedData();
   
-  __downloader->setProgressBar(vApp()->userInterface()->mainWindow()->progressBar());
+  if (wui()) {
+    __downloader->setProgressBar(wui()->mainWindow()->progressBar());
+  }
+  
   __beginDownload();
 }
 

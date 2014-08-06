@@ -19,10 +19,6 @@
 
 #include <QtCore>
 
-#ifdef Q_OS_ANDROID
-# include <GLES/gl.h>
-#endif
-
 #include "db/airportdatabase.h"
 #include "glutils/texture.h"
 #include "modules/modelmatcher.h"
@@ -31,6 +27,7 @@
 #include "ui/actions/metaraction.h"
 #include "ui/actions/trackaction.h"
 #include "ui/map/mapconfig.h"
+#include "ui/widgets/mapwidget.h"
 #include "ui/windows/metarswindow.h"
 #include "ui/userinterface.h"
 #include "vatsimdata/client/pilot.h"
@@ -45,7 +42,7 @@ FlightItem::FlightItem(const Pilot* _pilot, QObject* _parent) :
     __pilot(_pilot),
     __position(_pilot->position()),
     __model(nullptr),
-    __label(nullptr),
+    __label(QOpenGLTexture::Target2D),
     __linesReady(false) {
   connect(SettingsManager::getSingletonPtr(),   SIGNAL(settingsChanged()),
           this,                                 SLOT(__reloadSettings())); 
@@ -54,12 +51,11 @@ FlightItem::FlightItem(const Pilot* _pilot, QObject* _parent) :
 }
 
 FlightItem::~FlightItem() {
-  if (__label)
-    delete __label;
+  __label.destroy();
 }
 
 void
-FlightItem::drawModel() const {
+FlightItem::drawModel(QOpenGLShaderProgram* _shader) const {
   static const GLfloat modelRect[] = {
     -0.03, -0.03,
     -0.03,  0.03,
@@ -70,45 +66,59 @@ FlightItem::drawModel() const {
   };
   
   static const GLfloat textureCoords[] = {
-    0.0, 0.0,
-    0.0, 1.0,
-    1.0, 1.0,
-    1.0, 0.0
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 0.0f,
+    0.0f, 0.0f
   };
-  
-  glTexCoordPointer(2, GL_FLOAT, 0, textureCoords);
   
   if (!__model)
     __matchModel();
   
-  glPushMatrix();
-    glRotatef(static_cast<GLfloat>(data()->heading()), 0, 0, -1);
-    glVertexPointer(2, GL_FLOAT, 0, modelRect);
-    __model->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-  glPopMatrix();
+  _shader->setAttributeArray(MapWidget::texcoordLocation(), textureCoords, 2);
+  _shader->setAttributeArray(MapWidget::vertexLocation(), modelRect, 2);
+  
+//     glRotatef(static_cast<GLfloat>(data()->heading()), 0, 0, -1);
+  __model->bind();
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void
-FlightItem::drawLabel() const {
-//   static const GLfloat labelRect[] = {
-//     -0.16,  0.019,
-//     -0.16,  0.12566666,
-//      0.16,  0.12566666,
-//      0.16,  0.019
-//   };
-//   
-//   if (!__label)
-//     __generateLabel();
-//   
-//   __label->bind();
-//   glVertexPointer(2, GL_FLOAT, 0, labelRect);
-//   glDrawArrays(GL_QUADS, 0, 4);
-//   __label->unbind();
+FlightItem::drawLabel(QOpenGLShaderProgram* _shader) const {
+  static const GLfloat labelRect[] = {
+    -0.16,  0.019,
+    -0.16,  0.12566666,
+     0.16,  0.12566666,
+     0.16,  0.12566666,
+     0.16,  0.019,
+    -0.16,  0.019
+  };
+  
+  static const GLfloat textureCoords[] = {
+    0.0f, 0.0f,
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 1.0f,
+    1.0f, 0.0f,
+    0.0f, 0.0f
+  };
+  
+  _shader->setAttributeArray(MapWidget::texcoordLocation(), textureCoords, 2);
+  _shader->setAttributeArray(MapWidget::vertexLocation(), labelRect, 2);
+  
+  if (!__label.isCreated())
+    __initializeLabel();
+  
+  __label.bind();
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  __label.release();
 }
 
 void
-FlightItem::drawLines(LineTypes types) const {
+FlightItem::drawLines(LineTypes types, QOpenGLShaderProgram* _shader) const {
   if (!__linesReady)
     __prepareLines();
   
@@ -116,12 +126,8 @@ FlightItem::drawLines(LineTypes types) const {
     if (!__otpLine.color.isValid())
       __otpLine.color = SM::get("map.origin_to_pilot_line_color").value<QColor>();
     
-    glColor4f(__otpLine.color.redF(),
-              __otpLine.color.greenF(),
-              __otpLine.color.blueF(),
-              1.0);
-    
-    glVertexPointer(2, GL_FLOAT, 0, __otpLine.coords.constData());
+    _shader->setUniformValue(MapWidget::getSingleton().identityColorLocation(), __otpLine.color);
+    _shader->setAttributeArray(MapWidget::vertexLocation(), __otpLine.coords.constData(), 2);
     glDrawArrays(GL_LINE_STRIP, 0, __otpLine.coords.size() / 2);
   }
   
@@ -129,22 +135,12 @@ FlightItem::drawLines(LineTypes types) const {
     if (!__ptdLine.color.isValid())
       __ptdLine.color = SM::get("map.pilot_to_destination_line_color").value<QColor>();
     
-    glColor4f(__ptdLine.color.redF(),
-              __ptdLine.color.greenF(),
-              __ptdLine.color.blueF(),
-              1.0);
+    _shader->setUniformValue(MapWidget::getSingleton().identityColorLocation(), __ptdLine.color);
+    _shader->setAttributeArray(MapWidget::vertexLocation(), __ptdLine.coords.constData(), 2);
     
-    glVertexPointer(2, GL_FLOAT, 0, __ptdLine.coords.constData());
-    
-#ifndef Q_OS_ANDROID
     glLineStipple(3, 0xF0F0); // dashed line
-#endif
-    
     glDrawArrays(GL_LINE_STRIP, 0, __ptdLine.coords.size() / 2);
-    
-#ifndef Q_OS_ANDROID
     glLineStipple(1, 0xFFFF);
-#endif
   }
 }
 
@@ -194,8 +190,8 @@ FlightItem::menu(QWidget* _parent) const {
   QMenu* menu = new QMenu(data()->callsign(), _parent);
   
   ClientDetailsAction* showDetails = new ClientDetailsAction(data(), tr("Flight details"), _parent);
-  connect(showDetails,                                  SIGNAL(triggered(const Client*)),
-          UserInterface::getSingletonPtr(),             SLOT(showDetailsWindow(const Client*)));
+  connect(showDetails,                  SIGNAL(triggered(const Client*)),
+          vApp()->userInterface(),      SLOT(showDetails(const Client*)));
   menu->addAction(showDetails);
   
   TrackAction* trackFlight = new TrackAction(data(), _parent);
@@ -206,14 +202,14 @@ FlightItem::menu(QWidget* _parent) const {
   if (!data()->route().origin.isEmpty()) {
     MetarAction* ma = new MetarAction(data()->route().origin, _parent);
     connect(ma,                                         SIGNAL(triggered(QString)),
-            vApp()->userInterface()->metarsWindow(),    SLOT(show(QString)));
+            vApp()->userInterface(),                    SLOT(showMetar(QString)));
     menu->addAction(ma);
   }
   
   if (!data()->route().destination.isEmpty()) {
     MetarAction* ma = new MetarAction(data()->route().destination, _parent);
     connect(ma,                                         SIGNAL(triggered(QString)),
-            vApp()->userInterface()->metarsWindow(),    SLOT(show(QString)));
+            vApp()->userInterface(),                    SLOT(showMetar(QString)));
     menu->addAction(ma);
   }
   
@@ -222,15 +218,15 @@ FlightItem::menu(QWidget* _parent) const {
 
 void
 FlightItem::showDetailsWindow() const {
-  UserInterface::getSingleton().showDetailsWindow(data());
+  vApp()->userInterface()->showDetails(data());
 }
 
 void
-FlightItem::__generateLabel() const {
+FlightItem::__initializeLabel() const {
   static QRect labelRect(28, 10, 73, 13);
   
-  if (__label)
-    delete __label;
+  if (__label.isCreated())
+    __label.destroy();
   
   QString callsign(data()->callsign());
   
@@ -244,7 +240,8 @@ FlightItem::__generateLabel() const {
   painter.setPen(MapConfig::pilotPen());
   
   painter.drawText(labelRect, Qt::AlignCenter, callsign);
-  __label = new Texture(temp);
+  __label.setData(temp.mirrored(), QOpenGLTexture::DontGenerateMipMaps);
+  __label.setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Nearest);
 }
 
 void
@@ -268,9 +265,8 @@ FlightItem::__matchModel() const {
 
 void
 FlightItem::__reloadSettings() {
-  if (__label) {
-    delete __label;
-    __label = 0;
+  if (__label.isCreated()) {
+    __label.destroy();
   }
   
   __otpLine.color = QColor();
