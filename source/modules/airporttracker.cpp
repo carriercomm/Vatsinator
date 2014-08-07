@@ -32,8 +32,8 @@
 AirportTracker::AirportTracker(QObject* _parent) :
     QObject(_parent),
     __isInitialized(false) {
-  connect(MapWidget::getSingletonPtr(), SIGNAL(airportLinesToggled(const Airport*)),
-          this,                         SLOT(__toggleAirport(const Airport*)));
+//   connect(MapWidget::getSingletonPtr(), SIGNAL(airportLinesToggled(const Airport*)),
+//           this,                         SLOT(__toggleAirport(const Airport*)));
 }
 
 AirportTracker::~AirportTracker() {

@@ -50,11 +50,16 @@ SettingsManager::earlyGetLocale() {
 
 const QVariant &
 SettingsManager::get(const QString& _s) {
-  Q_ASSERT_X(getSingleton().__settings.contains(_s),
-             qPrintable(QString("SettingsManager::get(%1)").arg(_s)),
-             "No such value");
+//   Q_ASSERT_X(getSingleton().__settings.contains(_s),
+//              qPrintable(QString("SettingsManager::get(%1)").arg(_s)),
+//              "No such value");
   
-  return getSingleton().__settings[_s];
+  static QVariant v;
+  
+  if (getSingleton().__settings.contains(_s))
+    return getSingleton().__settings[_s];
+  else
+    return v;
 }
 
 void

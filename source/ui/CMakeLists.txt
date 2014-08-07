@@ -36,10 +36,10 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/license.h.in
 set (ui_SRCS
     notifiable.cpp
     userinterface.cpp
+    vatsinatorstyle.cpp
 )
 
 set (widgets_SRCS
-    vatsinatorstyle.cpp
     widgetsuserinterface.cpp
     
     actions/actionmenuseparator.cpp
@@ -106,18 +106,24 @@ set (widgets_SRCS
     windows/vatsinatorwindow.cpp
 )
 
+set (quick_SRCS
+    quickuserinterface.cpp
+)
+
 vatsinator_subdirectory_sources (ui "${ui_SRCS}")
 if (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
   vatsinator_subdirectory_sources (ui "${widgets_SRCS}")
+elseif (${vatsinator_UI_IMPLEMENTATION} MATCHES "quick")
+  vatsinator_subdirectory_sources (ui "${quick_SRCS}")
 endif (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
 
 
 set (ui_MOC_SRCS
     userinterface.h
+    vatsinatorstyle.h
 )
 
 set (widgets_MOC_SRCS
-    vatsinatorstyle.h
     widgetsuserinterface.h
     
     actions/actionmenuseparator.h
@@ -180,9 +186,15 @@ set (widgets_MOC_SRCS
     windows/vatsinatorwindow.h
 )
 
+set (quick_MOC_SRCS
+    quickuserinterface.cpp
+)
+
 vatsinator_subdirectory_mocs (ui "${ui_MOC_SRCS}")
 if (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
   vatsinator_subdirectory_mocs (ui "${widgets_MOC_SRCS}")
+elseif (${vatsinator_UI_IMPLEMENTATION} MATCHES "quick")
+  vatsinator_subdirectory_mocs (ui "${quick_MOC_SRCS}")
 endif (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
 
 set (widgets_FORMS
@@ -218,7 +230,14 @@ set (ui_QRCS
     resources/shaders.qrc
 )
 
+set (quick_QRCS
+    qml/qmls.qrc
+)
+
 vatsinator_subdirectory_resources (ui "${ui_QRCS}")
+if (${vatsinator_UI_IMPLEMENTATION} MATCHES "quick")
+  vatsinator_subdirectory_resources (ui "${quick_QRCS}")
+endif (${vatsinator_UI_IMPLEMENTATION} MATCHES "quick")
 
 # icon for Windows
 if (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets" AND WIN32)

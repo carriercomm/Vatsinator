@@ -43,6 +43,8 @@ find_package (QJSON REQUIRED)
 
 if (NOT ANDROID)
   find_package (OpenGL REQUIRED)
+else (NOT ANDROID)
+  find_package (Qt5Quick REQUIRED)
 endif (NOT ANDROID)
 
 
@@ -53,6 +55,10 @@ include_directories(${Qt5OpenGL_INCLUDE_DIRS})
 include_directories(${Qt5Network_INCLUDE_DIRS})
 include_directories(${Qt5Xml_INCLUDE_DIRS})
 include_directories(${QJSON_INCLUDE_DIR})
+if (ANDROID)
+  include_directories(${Qt5Quick_INCLUDE_DIRS})
+endif (ANDROID)
+
 
 if (MINGW AND CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
     # Cmake adds -rdynamic to compiler flags.
@@ -196,6 +202,8 @@ elseif (ANDROID)
     get_target_property(QtNetwork_location Qt5::Network LOCATION)
     get_target_property(QtOpenGL_location Qt5::OpenGL LOCATION)
     get_target_property(QtXml_location Qt5::Xml LOCATION)
+    get_target_property(QtQuick_location Qt5::Quick LOCATION)
+    get_target_property(QtQml_location Qt5::Qml LOCATION)
     get_target_property(qjson_location qjson LOCATION)
 
     install (FILES
@@ -205,6 +213,8 @@ elseif (ANDROID)
             ${QtNetwork_location}
             ${QtOpenGL_location}
             ${QtXml_location}
+            ${QtQuick_location}
+            ${QtQml_location}
             ${QUAZIP_LIBRARIES}
             ${qjson_location}
             DESTINATION libs/${ANDROID_ABI}
@@ -230,7 +240,7 @@ elseif (APPLE)
 elseif (WIN32)
     message (STATUS " * platform: Win32")
 elseif (ANDROID)
-    message (STATUS " * platform: Android")
+    message (STATUS " * platform: Android (${ANDROID_ABI})")
 else (LINUX)
     message (STATUS " * platform: Undefined")
 endif (LINUX)

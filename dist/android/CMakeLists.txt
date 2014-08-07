@@ -1,5 +1,7 @@
 set (ANDROID_PACKAGE_NAME "org.eu.vatsinator.vatsinator")
 
+set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules)
+
 # find sdk utils
 find_program(ANT_BIN NAMES ant)
 if (NOT ANT_BIN)
@@ -23,7 +25,6 @@ set (ANDROID_PERMISSIONS
   INTERNET
   READ_EXTERNAL_STORAGE
   WRITE_EXTERNAL_STORAGE
-  SET_DEBUG_APP
 )
 
 set (ANDROID_PERMISSIONS_XML "")
@@ -52,15 +53,10 @@ add_custom_command (
 
 get_property (vatsinator_LIBRARY TARGET ${vatsinator_TARGET} PROPERTY LOCATION)
 
-# list qt plugins
-if (NOT QT_QMAKE_EXECUTABLE)
-  get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
-endif (NOT QT_QMAKE_EXECUTABLE)
-exec_program (${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_PLUGINS"
-    OUTPUT_VARIABLE QT_PLUGINS_DIR)
+include (QtAndroidDeploy)
 
-# see res/values/libs.xml
-set (ANDROID_QT_PLUGINS
+# install required plugins
+install_android_qt_plugins (
   platforms/android/libqtforandroid.so
   platforms/libqeglfs.so
   platforms/libqminimal.so
@@ -73,24 +69,20 @@ set (ANDROID_QT_PLUGINS
   accessible/libqtaccessiblewidgets.so
 )
 
-foreach (PLUGIN ${ANDROID_QT_PLUGINS})
-  install (FILES ${QT_PLUGINS_DIR}/${PLUGIN}
-    DESTINATION libs/${ANDROID_ABI})
-endforeach (PLUGIN ${ANDROID_QT_PLUGINS})
+install_android_qt_qmls (
+  QtQuick/Controls/libqtquickcontrolsplugin.so
+  QtQuick.2/libqtquick2plugin.so
+)
 
 # list of bundled jars
-exec_program (${QT_QMAKE_EXECUTABLE} ARGS "-query QT_INSTALL_PREFIX"
-    OUTPUT_VARIABLE QT_PREFIX)
 
-set (ANDROID_QT_JARS
+
+install_android_qt_jars(
   QtAndroid-bundled.jar
   QtAndroidAccessibility-bundled.jar
 )
 
-foreach (JAR ${ANDROID_QT_JARS})
-  install (FILES ${QT_PREFIX}/jar/${JAR}
-    DESTINATION libs)
-endforeach (JAR ${ANDROID_QT_JARS})
+configure_file (${CMAKE_CURRENT_SOURCE_DIR}/libs.xml.in ${CMAKE_CURRENT_BINARY_DIR}/res/values/libs.xml @ONLY)
 
 if (${ANDROID_STL} MATCHES "gnustl*")
   install (FILES ${ANDROID_NDK}/sources/cxx-stl/gnu-libstdc++/4.8/libs/${ANDROID_ABI}/libgnustl_shared.so
@@ -128,7 +120,7 @@ add_custom_target (deploy_apk
 add_custom_target (run_apk
   COMMAND ${ADB_BIN} shell am start -n ${ANDROID_PACKAGE_NAME}/org.qtproject.qt5.android.bindings.QtActivity
 )
-        
+
 if (${CMAKE_BUILD_TYPE} MATCHES Debug)
   # 1. generate a fake Android.mk
   file (WRITE ${CMAKE_CURRENT_BINARY_DIR}/jni/Android.mk "APP_ABI := ${ANDROID_ABI}\n")

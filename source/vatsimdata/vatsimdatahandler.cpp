@@ -17,7 +17,7 @@
 */
 
 #include <algorithm>
-#include <QtWidgets>
+#include <QtCore>
 #include <qjson/parser.h>
 
 #include "db/airportdatabase.h"
@@ -29,7 +29,6 @@
 #include "modules/modulemanager.h"
 #include "ui/pages/miscellaneouspage.h"
 #include "ui/windows/vatsinatorwindow.h"
-#include "ui/userinterface.h"
 #include "ui/widgetsuserinterface.h"
 #include "storage/cachefile.h"
 #include "storage/pluginmanager.h"
@@ -724,11 +723,13 @@ VatsimDataHandler::__slotUiCreated() {
   
   if (SM::get("network.cache_enabled").toBool() == true)
     __loadCachedData();
-  
+
+#if !(defined Q_OS_ANDROID)
   if (wui()) {
     __downloader->setProgressBar(wui()->mainWindow()->progressBar());
   }
-  
+#endif
+
   __beginDownload();
 }
 

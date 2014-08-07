@@ -115,16 +115,16 @@ StatsPurveyor::StatsPurveyor(QObject* _parent) :
     __reply(nullptr) {
   
   QSettings s;
-  if (!s.contains("Decided/stats")) { // no decision made yet
-    LetSendStatsDialog* dialog = new LetSendStatsDialog();
-    dialog->setAttribute(Qt::WA_DeleteOnClose);
-    connect(dialog,     SIGNAL(accepted()),
-            this,       SLOT(__statsAccepted()));
-    connect(dialog,     SIGNAL(rejected()),
-            this,       SLOT(__statsRejected()));
-    connect(vApp()->userInterface(),    SIGNAL(initialized()),
-            dialog,                     SLOT(show()));
-    QTimer::singleShot(StartDelay, this, SLOT(reportStartup()));
+  if (!s.contains("Decided/stats") && false) { // no decision made yet
+//     LetSendStatsDialog* dialog = new LetSendStatsDialog();
+//     dialog->setAttribute(Qt::WA_DeleteOnClose);
+//     connect(dialog,     SIGNAL(accepted()),
+//             this,       SLOT(__statsAccepted()));
+//     connect(dialog,     SIGNAL(rejected()),
+//             this,       SLOT(__statsRejected()));
+//     connect(vApp()->userInterface(),    SIGNAL(initialized()),
+//             dialog,                     SLOT(show()));
+//     QTimer::singleShot(StartDelay, this, SLOT(reportStartup()));
   } else {
     bool accepted = s.value("Settings/misc/send_statistics", false).toBool();
     if (accepted) {

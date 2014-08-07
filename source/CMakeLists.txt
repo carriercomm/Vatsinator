@@ -96,6 +96,7 @@ elseif (ANDROID)
         Qt5::Network
         Qt5::Xml
         Qt5::OpenGL
+        Qt5::Quick
         ${QUAZIP_LIBRARIES}
         ${QJSON_LIBRARIES}
         EGL
@@ -106,8 +107,10 @@ endif (LINUX)
 
 if (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
   set (UI_IMPLEMENTATION "WidgetsUserInterface")
+elseif (${vatsinator_UI_IMPLEMENTATION} MATCHES "quick")
+  set (UI_IMPLEMENTATION "QuickUserInterface")
 else (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
-  message(FATAL_ERROR "Known user interface implementations: widgets")
+  message(FATAL_ERROR "Known user interface implementations: widgets, quick")
 endif (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/vatsinator-config.h.in

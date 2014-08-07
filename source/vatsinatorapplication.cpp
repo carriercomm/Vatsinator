@@ -31,7 +31,7 @@
 #include "storage/pluginmanager.h"
 #include "storage/settingsmanager.h"
 #include "ui/pages/miscellaneouspage.h"
-#include "ui/userinterface.h"
+#include "ui/quickuserinterface.h"
 #include "ui/vatsinatorstyle.h"
 #include "ui/widgetsuserinterface.h"
 #include "ui/windows/settingswindow.h"
