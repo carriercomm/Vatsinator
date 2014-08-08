@@ -18,16 +18,10 @@
  */
 
 import QtQuick 2.2
-import QtQuick.Window 2.1
+import QtQuick.Dialogs 1.1
 
-Window {
-    id: aboutWindow
-    
-    title: qsTr("About Vatsinator")
-    width: 360
-    height: 360
-    
-    Text {
-      text: qsTr("About Vatsinator")
-      anchors.centerIn: parent
-    }
+MessageDialog {
+  visible: true
+  title: qsTr("About Vatsinator")
+  text: qsTr("Vatsinator is an open-source Vatsim network monitor.")
+}

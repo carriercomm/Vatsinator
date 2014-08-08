@@ -24,10 +24,13 @@ ApplicationWindow {
   id: vatsinatorWindow
   
   title: "Vatsinator"
-  visible: true
   
   height: 480
   width: 320
+  
+  Loader {
+    id: loader
+  }
   
   menuBar: MenuBar {
     Menu {
@@ -44,9 +47,10 @@ ApplicationWindow {
       MenuSeparator { }
       
       MenuItem {
+        id: actionAbout
         text: qsTr("About")
         onTriggered: {
-          
+          loader.source = "AboutDialog.qml"
         }
       }
     }

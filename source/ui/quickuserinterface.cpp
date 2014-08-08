@@ -32,8 +32,7 @@ void
 QuickUserInterface::initialize() {
   __engine.load(QUrl("qrc:///qmls/vatsinator.qml"));
   
-//   emit initialized();
-  
+  emit initialized();
 }
 
 void
