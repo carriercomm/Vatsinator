@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="qmls">
+    <file>about.qml</file>
     <file>vatsinator.qml</file>
   </qresource>
 </RCC>

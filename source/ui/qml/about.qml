@@ -18,44 +18,16 @@
  */
 
 import QtQuick 2.2
-import QtQuick.Controls 1.2
+import QtQuick.Window 2.1
 
-ApplicationWindow {
-  id: vatsinatorWindow
-  
-  title: "Vatsinator"
-  visible: true
-  
-  height: 480
-  width: 320
-  
-  menuBar: MenuBar {
-    Menu {
-      title: "Vatsinator"
-      
-      MenuItem {
-        text: qsTr("Flights")
-      }
-      
-      MenuItem {
-        text: qsTr("ATC")
-      }
-      
-      MenuSeparator { }
-      
-      MenuItem {
-        text: qsTr("About")
-        onTriggered: {
-          
-        }
-      }
+Window {
+    id: aboutWindow
+    
+    title: qsTr("About Vatsinator")
+    width: 360
+    height: 360
+    
+    Text {
+      text: qsTr("About Vatsinator")
+      anchors.centerIn: parent
     }
-  }
-  
-  Text {
-    text: qsTr("Map will be here")
-    anchors.centerIn: parent
-  }
-  
-  Component.onCompleted: visible = true
-}
