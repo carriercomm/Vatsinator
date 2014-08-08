@@ -22,23 +22,34 @@ import QtQuick.Controls 1.2
 
 ApplicationWindow {
   id: vatsinatorWindow
+  
+  title: "Vatsinator"
+  width: 640
+  height: 480
+  visible: true
+  
   menuBar: MenuBar {
     Menu {
       title: "Vatsinator"
       
       MenuItem {
-        text: "Flights"
+        text: qsTr("Flights")
       }
       
       MenuItem {
-        text: "ATC"
+        text: qsTr("ATC")
       }
       
       MenuSeparator { }
       
       MenuItem {
-        text: "About"
+        text: qsTr("About")
       }
     }
+  }
+  
+  Text {
+    text: qsTr("Map will be here")
+    anchors.centerIn: parent
   }
 }

@@ -62,13 +62,19 @@ function (install_android_qt_qmls)
         <item>${QML_FILE}:qml/${QML}</item>")
     
     install (FILES
-        ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes
         ${QT_INSTALL_QML_DIR}/${QML_PATH}/qmldir
       DESTINATION assets/qml/${QML_PATH})
     
     set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}
-        <item>qml/${QML_PATH}/plugins.qmltypes:qml/${QML_PATH}/plugins.qmltypes</item>
-        <item>qml/${QML_PATH}/qmldir:qml/${QML_PATH}/plugins.qmldir</item>")
+        <item>qml/${QML_PATH}/qmldir:qml/${QML_PATH}/qmldir</item>")
+    
+    if (EXISTS ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes)
+      install (FILES
+          ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes
+        DESTINATION assets/qml/${QML_PATH})
+      set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}
+        <item>qml/${QML_PATH}/plugins.qmltypes:qml/${QML_PATH}/plugins.qmltypes</item>")
+    endif (EXISTS ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes)  
     
   endforeach (QML)
   set (QT_ANDROID_XML_bundled_in_lib "${QT_ANDROID_XML_bundled_in_lib}" PARENT_SCOPE)

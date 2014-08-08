@@ -25,18 +25,15 @@ QuickUserInterface::QuickUserInterface(QObject* _parent) :
     UserInterface(_parent) {}
 
 QuickUserInterface::~QuickUserInterface() {
-  delete __view;
+
 }
 
 void
 QuickUserInterface::initialize() {
-  __view = new QQuickView();
-  __view->setResizeMode(QQuickView::SizeViewToRootObject);
-  __view->setSource(QUrl("qrc:///qmls/vatsinator.qml"));
+  __engine.load(QUrl("qrc:///qmls/vatsinator.qml"));
   
-  emit initialized();
+//   emit initialized();
   
-  __view->show();
 }
 
 void

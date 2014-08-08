@@ -28,9 +28,7 @@
 
 class PlainTextDownloader;
 
-class MetarListModel :
-    public QAbstractListModel,
-    public Singleton<MetarListModel> {
+class MetarListModel : public QAbstractListModel {
 
   /* TODO
    * Split to MetarListModel & MetarUpdater

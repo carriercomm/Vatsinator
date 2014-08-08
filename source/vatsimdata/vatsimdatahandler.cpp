@@ -749,7 +749,7 @@ VatsimDataHandler::__dataFetched(QString _data) {
     if (SM::get("network.cache_enabled").toBool())
       FileManager::cacheData(CacheFileName, _data);
     
-    MetarListModel::getSingleton().updateAll();
+//     MetarListModel::getSingleton().updateAll();
   } else {
     parseStatusFile(_data);
   }

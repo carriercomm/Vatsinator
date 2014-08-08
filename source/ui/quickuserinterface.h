@@ -20,9 +20,9 @@
 #ifndef QUICKUSERINTERFACE_H
 #define QUICKUSERINTERFACE_H
 
-#include "ui/userinterface.h"
+#include <QQmlApplicationEngine>
 
-class QQuickView;
+#include "ui/userinterface.h"
 
 /**
  * This is the mobile version of the user interface, based on QtQuick.
@@ -48,7 +48,7 @@ public slots:
   void showMetar(const QString&);
   
 private:
-  QQuickView* __view;
+  QQmlApplicationEngine __engine;
   
 };
 

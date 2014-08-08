@@ -27,9 +27,9 @@ int main(int argc, char** argv) {
   Q_INIT_RESOURCE(imgs);
   Q_INIT_RESOURCE(weather);
   
-  QApplication::setApplicationName("Vatsinator");
-  QApplication::setOrganizationName("VatsinatorTeam");
-  QApplication::setApplicationVersion(VATSINATOR_VERSION);
+  QGuiApplication::setApplicationName("Vatsinator");
+  QGuiApplication::setOrganizationName("VatsinatorTeam");
+  QGuiApplication::setApplicationVersion(VATSINATOR_VERSION);
   
   qRegisterMetaType<LonLat>("LonLat");
   qRegisterMetaTypeStreamOperators<LonLat>("LonLat");

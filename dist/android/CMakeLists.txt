@@ -66,17 +66,25 @@ install_android_qt_plugins (
   generic/libqevdevmouseplugin.so
   generic/libqevdevtabletplugin.so
   generic/libqevdevtouchplugin.so
+  accessible/libqtaccessiblequick.so
   accessible/libqtaccessiblewidgets.so
+  qmltooling/libqmldbg_qtquick2.so
+  qmltooling/libqmldbg_tcp.so
 )
 
 install_android_qt_qmls (
+  Qt/labs/folderlistmodel/libqmlfolderlistmodelplugin.so
+  Qt/labs/settings/libqmlsettingsplugin.so
+  QtQml/Models.2/libmodelsplugin.so
   QtQuick/Controls/libqtquickcontrolsplugin.so
+  QtQuick/Dialogs/libdialogplugin.so
+  QtQuick/Dialogs/Private/libdialogsprivateplugin.so
+  QtQuick/Layouts/libqquicklayoutsplugin.so
+  QtQuick/Window.2/libwindowplugin.so
   QtQuick.2/libqtquick2plugin.so
 )
 
 # list of bundled jars
-
-
 install_android_qt_jars(
   QtAndroid-bundled.jar
   QtAndroidAccessibility-bundled.jar
