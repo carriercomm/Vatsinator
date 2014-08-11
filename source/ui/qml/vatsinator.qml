@@ -23,9 +23,9 @@ import QtQuick.Controls 1.2
 ApplicationWindow {
   id: vatsinatorWindow
   
-  title: "Vatsinator"
   
   height: 480
+  title: "Vatsinator"
   width: 320
   
   Loader {
@@ -51,6 +51,7 @@ ApplicationWindow {
         text: qsTr("About")
         onTriggered: {
           loader.source = "AboutDialog.qml"
+          loader.item.open()
         }
       }
     }

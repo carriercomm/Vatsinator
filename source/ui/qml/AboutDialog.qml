@@ -21,7 +21,6 @@ import QtQuick 2.2
 import QtQuick.Dialogs 1.1
 
 MessageDialog {
-  visible: true
   title: qsTr("About Vatsinator")
   text: qsTr("Vatsinator is an open-source Vatsim network monitor.")
 }
