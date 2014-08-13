@@ -36,10 +36,10 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/license.h.in
 set (ui_SRCS
     notifiable.cpp
     userinterface.cpp
-    vatsinatorstyle.cpp
 )
 
 set (widgets_SRCS
+    vatsinatorstyle.cpp
     widgetsuserinterface.cpp
     
     actions/actionmenuseparator.cpp
@@ -120,10 +120,10 @@ endif (${vatsinator_UI_IMPLEMENTATION} MATCHES "widgets")
 
 set (ui_MOC_SRCS
     userinterface.h
-    vatsinatorstyle.h
 )
 
 set (widgets_MOC_SRCS
+    vatsinatorstyle.h
     widgetsuserinterface.h
     
     actions/actionmenuseparator.h

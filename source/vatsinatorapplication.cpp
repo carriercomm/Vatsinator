@@ -17,7 +17,6 @@
 */
 
 #include <QtCore>
-#include <QtQuick>
 
 #include "db/airlinedatabase.h"
 #include "db/airportdatabase.h"
@@ -46,7 +45,7 @@
 #include "vatsinatorapplication.h"
 
 VatsinatorApplication::VatsinatorApplication(int& _argc, char** _argv) :
-    QGuiApplication(_argc, _argv),
+    QApplication(_argc, _argv),
     __userInterface(new VATSINATOR_UI_IMPLEMENTATION()),
     __fileManager(new FileManager()),
     __settingsManager(new SettingsManager()),
@@ -76,7 +75,9 @@ VatsinatorApplication::VatsinatorApplication(int& _argc, char** _argv) :
   connect(qApp,         SIGNAL(aboutToQuit()),
           tr,           SLOT(deleteLater()));
   
-//   setStyle(new VatsinatorStyle());
+#ifndef Q_OS_ANDROID
+  setStyle(new VatsinatorStyle());
+#endif
   
   connect(this, SIGNAL(initializing()), SLOT(__initialize()));
   emit initializing();

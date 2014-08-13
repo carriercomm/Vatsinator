@@ -20,7 +20,7 @@
 #ifndef VATSINATORAPPLICATION_H
 #define VATSINATORAPPLICATION_H
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QFont>
 #include <QMutex>
 #include <QProxyStyle>
@@ -43,7 +43,7 @@ class UserInterface;
 class VatsimDataHandler;
 class WorldMap;
 
-class VatsinatorApplication : public QGuiApplication {
+class VatsinatorApplication : public QApplication {
 
   Q_OBJECT
   

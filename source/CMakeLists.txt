@@ -92,7 +92,6 @@ elseif (ANDROID)
     set (vatsinator_PREFIX "")
 
     set (vatsinator_LIBS
-        Qt5::Widgets
         Qt5::Network
         Qt5::Xml
         Qt5::OpenGL
