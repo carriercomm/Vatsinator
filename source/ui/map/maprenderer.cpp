@@ -18,6 +18,7 @@
  */
 
 #include <QtGui>
+#include <QtOpenGL>
 
 #include "storage/settingsmanager.h"
 #include "ui/map/airportitem.h"
@@ -53,22 +54,24 @@ MapRenderer::MapRenderer(QObject* _parent) :
           this,                                 SLOT(__reloadSettings()));
   __reloadSettings();
   
+#ifndef Q_OS_ANDROID
   glEnable(GL_MULTISAMPLE);
   glEnable(GL_LINE_STIPPLE);
-  
   glShadeModel(GL_SMOOTH);
-  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-  glEnable(GL_TEXTURE_2D);
-  glEnable(GL_DEPTH_TEST);
   glEnable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0.1f);
+  glEnable(GL_TEXTURE_2D);
+#endif
+  
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+  glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   glClearColor(__settings.colors.seas.redF(), __settings.colors.seas.greenF(), __settings.colors.seas.blueF(), 1.0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-  Q_ASSERT(glGetError() == 0);
+//   Q_ASSERT(glGetError() == 0);
   
   /* For a really strong debug */
 //   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -127,8 +130,9 @@ MapRenderer::onScreen(const QPointF& _point) {
 }
 
 void
-MapRenderer::setZoom(int _zoom) {
+MapRenderer::setZoom(qreal _zoom) {
   __zoom = _zoom;
+//   emit updated();
 }
 
 void
@@ -524,7 +528,6 @@ MapRenderer::__updateOffsets() {
 
 bool
 MapRenderer::__shouldDrawPilotLabel(const MapItem* _item) {
-  Q_ASSERT(dynamic_cast<const FlightItem*>(_pilot));
   
   if (__settings.view.pilot_labels.always)
     return true;

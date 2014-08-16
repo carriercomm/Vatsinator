@@ -107,7 +107,7 @@ private slots:
   /**
    * This slot is connected to every Pilot's destroyed() signal.
    */
-  void __removeFlightItem();
+  void __removeFlightItem(QObject*);
   
 private:
   MapRenderer* __renderer;

@@ -55,13 +55,13 @@ private:
   void __readModels();
   
 private slots:
-  void __loadPixmaps();
+  void __loadPixmaps() const;
 
 private:
 
-  QMap<QString, QString>  __modelsFiles;
-  QMap<QString, Texture*> __modelsPixmaps;
-  QList<Texture*>         __pixmaps;
+  QMap<QString, QString>          __modelsFiles;
+  mutable QMap<QString, Texture*> __modelsPixmaps;
+  mutable QList<Texture*>         __pixmaps;
 
 };
 

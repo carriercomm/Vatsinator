@@ -46,8 +46,12 @@ MapScene::MapScene(QObject* _parent) :
   
   connect(vApp()->vatsimDataHandler(),  SIGNAL(vatsimDataUpdated()),
           this,                         SLOT(__updateItems()));
-  connect(vApp()->vatsimDataHandler(),  SIGNAL(initialized()),
-          this,                         SLOT(__setupItems()));
+  
+  if (vApp()->vatsimDataHandler()->isInitialized())
+    __setupItems();
+  else
+    connect(vApp()->vatsimDataHandler(),  SIGNAL(initialized()),
+            this,                         SLOT(__setupItems()));
 }
 
 MapScene::~MapScene() {}
@@ -92,7 +96,7 @@ MapScene::moveSmoothly(const LonLat& _target) {
 void
 MapScene::__addFlightItem(const Pilot* _p) {
   connect(_p,           SIGNAL(destroyed(QObject*)),
-          this,         SLOT(__removeFlightItem()), Qt::DirectConnection);
+          this,         SLOT(__removeFlightItem(QObject*)), Qt::DirectConnection);
   __flightItems << new FlightItem(_p, this);
 }
 
@@ -129,10 +133,10 @@ MapScene::__updateItems() {
 }
 
 void
-MapScene::__removeFlightItem() {
-  Q_ASSERT(sender());
+MapScene::__removeFlightItem(QObject* _item) {
+  Q_ASSERT(_item);
   for (int i = 0; i < __flightItems.size(); ++i) {
-    if (__flightItems[i]->data() == sender()) {
+    if (__flightItems[i]->data() == _item) {
       __flightItems.at(i)->deleteLater();
       __flightItems.removeAt(i);
       
@@ -140,5 +144,5 @@ MapScene::__removeFlightItem() {
     }
   }
   
-  Q_ASSERT_X(false, "MapScene", "The flight does not exist in the scene");
+  Q_UNREACHABLE();
 }

@@ -42,6 +42,9 @@ ModelMatcher::~ModelMatcher() {
 
 const Texture*
 ModelMatcher::matchMyModel(const QString& _acft) const {
+  if (__modelsPixmaps.isEmpty())
+    __loadPixmaps();
+  
   if (_acft.isEmpty())
     return __modelsPixmaps["ZZZZ"];
   
@@ -76,7 +79,7 @@ ModelMatcher::__readModels() {
 }
 
 void
-ModelMatcher::__loadPixmaps() {
+ModelMatcher::__loadPixmaps() const {
   QMap<QString, Texture*> pixmapsLoaded;
   QList<QString> models = { "1p", "2p", "4p", "2j", "3j", "4j", "conc" };
   

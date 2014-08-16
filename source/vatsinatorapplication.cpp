@@ -31,9 +31,7 @@
 #include "storage/pluginmanager.h"
 #include "storage/settingsmanager.h"
 #include "ui/pages/miscellaneouspage.h"
-#include "ui/quickuserinterface.h"
 #include "ui/vatsinatorstyle.h"
-#include "ui/widgetsuserinterface.h"
 #include "ui/windows/settingswindow.h"
 #include "ui/windows/vatsinatorwindow.h"
 #include "vatsimdata/vatsimdatahandler.h"
@@ -41,6 +39,12 @@
 #include "vatsimdata/models/flighttablemodel.h"
 #include "storage/filemanager.h"
 #include "config.h"
+
+#ifdef Q_OS_ANDROID
+# include "ui/quickuserinterface.h"
+#else
+# include "ui/widgetsuserinterface.h"
+#endif
 
 #include "vatsinatorapplication.h"
 

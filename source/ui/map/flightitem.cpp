@@ -17,7 +17,7 @@
  *
  */
 
-#include <QtCore>
+#include <QtOpenGL>
 
 #include "db/airportdatabase.h"
 #include "glutils/texture.h"
@@ -33,6 +33,10 @@
 #include "vatsinatorapplication.h"
 
 #include "flightitem.h"
+
+#ifdef Q_OS_ANDROID
+#define glLineStipple(a, b)
+#endif
 
 FlightItem::FlightItem(const Pilot* _pilot, QObject* _parent) :
     QObject(_parent),

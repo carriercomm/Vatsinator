@@ -106,6 +106,8 @@ set (widgets_SRCS
 
 set (quick_SRCS
     quickuserinterface.cpp
+    
+    quick/map.cpp
 )
 
 vatsinator_subdirectory_sources (ui "${ui_SRCS}")
@@ -184,7 +186,9 @@ set (widgets_MOC_SRCS
 )
 
 set (quick_MOC_SRCS
-    quickuserinterface.cpp
+    quickuserinterface.h
+    
+    quick/map.h
 )
 
 vatsinator_subdirectory_mocs (ui "${ui_MOC_SRCS}")

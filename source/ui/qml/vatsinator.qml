@@ -19,6 +19,7 @@
 
 import QtQuick 2.2
 import QtQuick.Controls 1.2
+import VatsinatorQML 1.0
 
 ApplicationWindow {
   id: vatsinatorWindow
@@ -57,9 +58,36 @@ ApplicationWindow {
     }
   }
   
-  Text {
-    text: qsTr("Map will be here")
-    anchors.centerIn: parent
+  Map {
+    id: map
+  }
+  
+  PinchArea {
+    anchors.fill: parent
+    
+    onPinchUpdated: {
+//       console.log(pinch.scale)
+      map.updateZoom(pinch.scale - pinch.previousScale)
+    }
+    
+    MouseArea {
+      anchors.fill: parent
+      
+      property int lastX
+      property int lastY
+      
+      onPressed: {
+        lastX = mouse.x;
+        lastY = mouse.y;
+        mouse.accepted = true;
+      }
+      
+      onPositionChanged: {
+        map.updatePosition(mouse.x - lastX, mouse.y - lastY);
+        lastX = mouse.x;
+        lastY = mouse.y;
+      }
+    }
   }
   
   Component.onCompleted: visible = true

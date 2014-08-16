@@ -19,6 +19,8 @@
 
 #include <QQuickView>
 
+#include "ui/quick/map.h"
+
 #include "quickuserinterface.h"
 
 QuickUserInterface::QuickUserInterface(QObject* _parent) :
@@ -30,6 +32,8 @@ QuickUserInterface::~QuickUserInterface() {
 
 void
 QuickUserInterface::initialize() {
+  qmlRegisterType<Map>("VatsinatorQML", 1, 0, "Map");
+  
   __engine.load(QUrl("qrc:///qmls/vatsinator.qml"));
   
   emit initialized();

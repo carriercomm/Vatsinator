@@ -18,6 +18,7 @@
  */
 
 #include <QtGlobal>
+#include <QtOpenGL>
 
 #include "db/airportdatabase.h"
 #include "storage/settingsmanager.h"
@@ -34,6 +35,10 @@
 #include "vatsinatorapplication.h"
 
 #include "airportitem.h"
+
+#ifdef Q_OS_ANDROID
+#define glLineStipple(a, b)
+#endif
 
 AirportItem::AirportItem(const Airport* _ap, QObject* _parent) :
     QObject(_parent),
@@ -125,27 +130,27 @@ AirportItem::drawLines() const {
   if (!__otpLines.color.isValid())
       __otpLines.color = SM::get("map.origin_to_pilot_line_color").value<QColor>();
   
-  glColor4f(__otpLines.color.redF(),
-            __otpLines.color.greenF(),
-            __otpLines.color.blueF(),
-            1.0);
-  
-  glVertexPointer(2, GL_FLOAT, 0, __otpLines.coords.constData());
-  glDrawArrays(GL_LINES, 0, __otpLines.coords.size() / 2);
-  
-  if (!__ptdLines.color.isValid())
-    __ptdLines.color = SM::get("map.pilot_to_destination_line_color").value<QColor>();
-    
-  glColor4f(__ptdLines.color.redF(),
-            __ptdLines.color.greenF(),
-            __ptdLines.color.blueF(),
-            1.0);
-    
-    glVertexPointer(2, GL_FLOAT, 0, __ptdLines.coords.constData());
-    
-    glLineStipple(3, 0xF0F0); // dashed line
-    glDrawArrays(GL_LINE_STRIP, 0, __ptdLines.coords.size() / 2);
-    glLineStipple(1, 0xFFFF);
+//   glColor4f(__otpLines.color.redF(),
+//             __otpLines.color.greenF(),
+//             __otpLines.color.blueF(),
+//             1.0);
+//   
+//   glVertexPointer(2, GL_FLOAT, 0, __otpLines.coords.constData());
+//   glDrawArrays(GL_LINES, 0, __otpLines.coords.size() / 2);
+//   
+//   if (!__ptdLines.color.isValid())
+//     __ptdLines.color = SM::get("map.pilot_to_destination_line_color").value<QColor>();
+//     
+//   glColor4f(__ptdLines.color.redF(),
+//             __ptdLines.color.greenF(),
+//             __ptdLines.color.blueF(),
+//             1.0);
+//     
+//     glVertexPointer(2, GL_FLOAT, 0, __ptdLines.coords.constData());
+//     
+//     glLineStipple(3, 0xF0F0); // dashed line
+//     glDrawArrays(GL_LINE_STRIP, 0, __ptdLines.coords.size() / 2);
+//     glLineStipple(1, 0xFFFF);
 }
 
 bool
