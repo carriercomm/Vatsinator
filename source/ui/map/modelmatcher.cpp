@@ -1,6 +1,6 @@
 /*
     modelmatcher.cpp
-    Copyright (C) 2012  Michał Garapich michal@garapich.pl
+    Copyright (C) 2012-2014  Michał Garapich michal@garapich.pl
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,9 +31,7 @@
 
 ModelMatcher::ModelMatcher(QObject* _parent) : QObject(_parent) {
   __readModels();
-//   __loadPixmaps();
-//   connect(wui()->mainWindow()->mapWidget(),     SIGNAL(glReady()),
-//           this,                                 SLOT(__loadPixmaps()));
+  __loadPixmaps();
 }
 
 ModelMatcher::~ModelMatcher() {
@@ -79,7 +77,7 @@ ModelMatcher::__readModels() {
 }
 
 void
-ModelMatcher::__loadPixmaps() const {
+ModelMatcher::__loadPixmaps() {
   QMap<QString, Texture*> pixmapsLoaded;
   QList<QString> models = { "1p", "2p", "4p", "2j", "3j", "4j", "conc" };
   

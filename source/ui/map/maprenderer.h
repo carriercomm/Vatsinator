@@ -29,6 +29,7 @@
 class IconKeeper;
 class MapItem;
 class MapScene;
+class ModelMatcher;
 class WorldPolygon;
 class QOpenGLShaderProgram;
 
@@ -117,6 +118,7 @@ public:
   inline int programZLocation() const { return __texturedZLocation; }
   inline int programRotationLocation() const { return __texturedRotationLocation; }
   inline IconKeeper* icons() { return __iconKeeper; }
+  inline ModelMatcher* models() { return __modelMatcher; }
   inline MapScene* scene() { return __scene; }
   
   /**
@@ -169,6 +171,9 @@ private:
   
   /* The IconKeeper instance */
   IconKeeper* __iconKeeper;
+  
+  /* The ModelMatcher instance */
+  ModelMatcher* __modelMatcher;
   
   /* Scene handler */
   MapScene* __scene;

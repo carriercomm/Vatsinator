@@ -1,6 +1,6 @@
 /*
     modelmatcher.h
-    Copyright (C) 2012  Michał Garapich michal@garapich.pl
+    Copyright (C) 2012-2014  Michał Garapich michal@garapich.pl
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #include <QMap>
 
 #include "ui/notifiable.h"
-#include "singleton.h"
 
 class Texture;
 
@@ -34,7 +33,7 @@ class Texture;
  * This class is responsible for matching user airplanes to 
  * corresponding models.
  */
-class ModelMatcher : public QObject, public Notifiable, public Singleton<ModelMatcher> {
+class ModelMatcher : public QObject, public Notifiable {
   Q_OBJECT
 
 public:
@@ -53,9 +52,7 @@ public:
   
 private:
   void __readModels();
-  
-private slots:
-  void __loadPixmaps() const;
+  void __loadPixmaps();
 
 private:
 
