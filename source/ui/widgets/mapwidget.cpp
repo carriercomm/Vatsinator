@@ -51,6 +51,8 @@
 MapWidget::MapWidget(QWidget* _parent) :
     QGLWidget(MapConfig::glFormat(), _parent) {
   
+  setAttribute(Qt::WA_NoSystemBackground);
+  
   connect(vApp()->vatsimDataHandler(),          SIGNAL(vatsimDataUpdated()),
           this,                                 SLOT(redraw()));
   
@@ -63,6 +65,26 @@ MapWidget::MapWidget(QWidget* _parent) :
 
 MapWidget::~MapWidget() {
   delete __renderer;
+}
+
+bool
+MapWidget::event(QEvent* _event) {
+  switch (_event->type()) {
+    case QEvent::ToolTip: {
+      QHelpEvent* helpEvent = static_cast<QHelpEvent*>(_event);
+      const MapItem* item = __underMouse(helpEvent->pos());
+      if (item) {
+        QToolTip::showText(helpEvent->globalPos(), item->tooltipText());
+      } else {
+        QToolTip::hideText();
+        _event->ignore();
+      }
+      
+      return true;
+    }
+    default:
+      return QGLWidget::event(_event);
+  }
 }
 
 void
@@ -80,9 +102,7 @@ MapWidget::initializeGL() {
   initGLExtensionsPointers();
   
   __renderer = new MapRenderer();
-  connect(__renderer,           SIGNAL(updated()),
-          this,                 SLOT(update()), Qt::DirectConnection);
-
+  
   emit glReady();
 }
 
@@ -90,12 +110,15 @@ void
 MapWidget::paintGL() {
   __renderer->paint();
   
-//   if (__renderer->underFocus()) {
-//     setCursor(QCursor(Qt::PointingHandCursor));
-//   } else {
-//     if (cursor().shape() != Qt::SizeAllCursor)
-//       setCursor(QCursor(Qt::ArrowCursor));
-//   }
+  const MapItem* item = __underMouse();
+  if (item) {
+    setCursor(QCursor(Qt::PointingHandCursor));
+//     QToolTip::showText(mapToGlobal(__mousePosition.screenPosition()), item->tooltipText());
+  } else {
+//     QToolTip::hideText();
+    if (cursor().shape() != Qt::SizeAllCursor)
+      setCursor(QCursor(Qt::ArrowCursor));
+  }
 }
 
 void
@@ -121,12 +144,12 @@ MapWidget::mousePressEvent(QMouseEvent* _event) {
   if (_event->buttons() & Qt::LeftButton) {
     __lastClickPosition = _event->pos();
   } else if (_event->buttons() & Qt::RightButton) {
-    QToolTip::hideText();
-//     if (__underMouse) {
-//       emit menuRequest(__underMouse);
-//     } else {
-//       emit menuRequest();
-//     }
+    const MapItem* item = __underMouse();
+    if (item) {
+      emit menuRequest(item);
+    } else {
+      emit menuRequest();
+    }
   }
   
   _event->accept();
@@ -137,13 +160,14 @@ MapWidget::mouseReleaseEvent(QMouseEvent* _event) {
   __mousePosition.update(_event->pos());
   __mousePosition.setDown(false);
   setCursor(QCursor(Qt::ArrowCursor));
-  /*
-  if (__underMouse) {
+  
+  const MapItem* item = __underMouse();
+  if (item) {
     if (__lastClickPosition == __mousePosition.screenPosition()) {
       QToolTip::hideText();
-      emit windowRequest(__underMouse);
+      emit windowRequest(item);
     }
-  }*/
+  }
   
   _event->accept();
 }
@@ -154,8 +178,9 @@ MapWidget::mouseMoveEvent(QMouseEvent* _event) {
     setCursor(QCursor(Qt::SizeAllCursor));
     
     QPoint diff = _event->pos() - __mousePosition.screenPosition();
+    diff.rx() *= -1;
     LonLat center = __renderer->center();
-    center -= __renderer->scaleToLonLat(diff);
+    center += __renderer->scaleToLonLat(diff);
     
     center.ry() = qBound(-90.0, center.y(), 90.0);
     if (center.x() < -180.0)
@@ -165,9 +190,33 @@ MapWidget::mouseMoveEvent(QMouseEvent* _event) {
     
     __renderer->setCenter(center);
   }
+  
   __mousePosition.update(_event->pos());
+  
   update();
   _event->accept();
+}
+
+const MapItem*
+MapWidget::__underMouse() {
+  const MapItem* closest = __renderer->scene()->nearest(__mousePosition.geoPosition());
+  Q_ASSERT(closest);
+   
+  if (__mousePosition.screenDistance(__renderer->mapFromLonLat(closest->position())) > MapConfig::mouseOnObject())
+    return nullptr;
+  else
+    return closest;
+}
+
+const MapItem*
+MapWidget::__underMouse(const QPoint& _p) {
+  const MapItem* closest = __renderer->scene()->nearest(__renderer->mapToLonLat(_p));
+  Q_ASSERT(closest);
+   
+  if (__mousePosition.screenDistance(__renderer->mapFromLonLat(closest->position())) > MapConfig::mouseOnObject())
+    return nullptr;
+  else
+    return closest;
 }
 
 void

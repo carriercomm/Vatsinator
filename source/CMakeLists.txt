@@ -85,9 +85,6 @@ elseif (WIN32)
         ${QUAZIP_LIBRARIES}
         ${QJSON_LIBRARIES}
   )
-  
-  # disable VBO on Win32 build - MinGW doesn't handle it properly
-  set (CONFIG_NO_VBO 1)
 elseif (ANDROID)
     set (vatsinator_PREFIX "")
 

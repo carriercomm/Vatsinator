@@ -56,6 +56,7 @@ ApproachCircleItem::ApproachCircleItem(const Airport* _ap, QObject* _parent) :
 
 void
 ApproachCircleItem::drawCircle() const {
+  /* TODO */
 //   if (__circle.isEmpty()) {
 //     __circle = makeCircle();
 //   }
@@ -72,13 +73,28 @@ ApproachCircleItem::drawCircle() const {
 }
 
 bool
-ApproachCircleItem::needsDrawing() const {
+ApproachCircleItem::isVisible() const {
+  return false;
+}
+
+bool
+ApproachCircleItem::isLabelVisible() const {
   return false;
 }
 
 const LonLat &
 ApproachCircleItem::position() const {
   return __position;
+}
+
+void
+ApproachCircleItem::drawItem(QOpenGLShaderProgram*) const {
+
+}
+
+void
+ApproachCircleItem::drawLabel(QOpenGLShaderProgram*) const {
+  
 }
 
 QString

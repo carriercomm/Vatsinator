@@ -61,7 +61,59 @@ AirportItem::~AirportItem() {
 }
 
 void
-AirportItem::drawIcon(QOpenGLShaderProgram* _shader) const {
+AirportItem::drawLines() const {
+//   if (!__linesReady)
+//     __prepareLines();
+//   
+//   if (!__otpLines.color.isValid())
+//       __otpLines.color = SM::get("map.origin_to_pilot_line_color").value<QColor>();
+//   
+//   glColor4f(__otpLines.color.redF(),
+//             __otpLines.color.greenF(),
+//             __otpLines.color.blueF(),
+//             1.0);
+//   
+//   glVertexPointer(2, GL_FLOAT, 0, __otpLines.coords.constData());
+//   glDrawArrays(GL_LINES, 0, __otpLines.coords.size() / 2);
+//   
+//   if (!__ptdLines.color.isValid())
+//     __ptdLines.color = SM::get("map.pilot_to_destination_line_color").value<QColor>();
+//     
+//   glColor4f(__ptdLines.color.redF(),
+//             __ptdLines.color.greenF(),
+//             __ptdLines.color.blueF(),
+//             1.0);
+//     
+//     glVertexPointer(2, GL_FLOAT, 0, __ptdLines.coords.constData());
+//     glLineStipple(3, 0xF0F0); // dashed line
+//     glDrawArrays(GL_LINE_STRIP, 0, __ptdLines.coords.size() / 2);
+//     glLineStipple(1, 0xFFFF);
+}
+
+bool
+AirportItem::isVisible() const {
+  Q_ASSERT(!__position.isNull());
+  
+  if (data()->isEmpty())
+    return __scene->settings().view.empty_airports;
+  else
+    return __scene->settings().view.airports_layer;
+}
+
+bool
+AirportItem::isLabelVisible() const {
+  return __scene->settings().view.airport_labels;
+}
+
+const LonLat &
+AirportItem::position() const {
+  return __position;
+}
+
+void
+AirportItem::drawItem(QOpenGLShaderProgram* _shader) const {
+  static constexpr float ActiveAirportsZ = static_cast<float>(MapConfig::MapLayers::ActiveAirports);
+  
   static const GLfloat iconRect[] = {
     -0.04, -0.02,
     -0.04,  0.06,
@@ -85,10 +137,11 @@ AirportItem::drawIcon(QOpenGLShaderProgram* _shader) const {
   
   _shader->setAttributeArray(MapRenderer::texcoordLocation(), textureCoords, 2);
   _shader->setAttributeArray(MapRenderer::vertexLocation(), iconRect, 2);
+  _shader->setUniformValue(__scene->renderer()->programZLocation(), ActiveAirportsZ);
   
   __icon->bind();
   glDrawArrays(GL_TRIANGLES, 0, 6);
-  __icon->release();
+//   __icon->release();
 }
 
 void
@@ -111,6 +164,9 @@ AirportItem::drawLabel(QOpenGLShaderProgram* _shader) const {
     0.0f, 0.0f
   };
   
+  if (data()->isEmpty())
+    return;
+  
   _shader->setAttributeArray(MapRenderer::texcoordLocation(), textureCoords, 2);
   _shader->setAttributeArray(MapRenderer::vertexLocation(), labelRect, 2);
   
@@ -120,47 +176,6 @@ AirportItem::drawLabel(QOpenGLShaderProgram* _shader) const {
   __label.bind();
   glDrawArrays(GL_TRIANGLES, 0, 6);
   __label.release();
-}
-
-void
-AirportItem::drawLines() const {
-  if (!__linesReady)
-    __prepareLines();
-  
-  if (!__otpLines.color.isValid())
-      __otpLines.color = SM::get("map.origin_to_pilot_line_color").value<QColor>();
-  
-//   glColor4f(__otpLines.color.redF(),
-//             __otpLines.color.greenF(),
-//             __otpLines.color.blueF(),
-//             1.0);
-//   
-//   glVertexPointer(2, GL_FLOAT, 0, __otpLines.coords.constData());
-//   glDrawArrays(GL_LINES, 0, __otpLines.coords.size() / 2);
-//   
-//   if (!__ptdLines.color.isValid())
-//     __ptdLines.color = SM::get("map.pilot_to_destination_line_color").value<QColor>();
-//     
-//   glColor4f(__ptdLines.color.redF(),
-//             __ptdLines.color.greenF(),
-//             __ptdLines.color.blueF(),
-//             1.0);
-//     
-//     glVertexPointer(2, GL_FLOAT, 0, __ptdLines.coords.constData());
-//     
-//     glLineStipple(3, 0xF0F0); // dashed line
-//     glDrawArrays(GL_LINE_STRIP, 0, __ptdLines.coords.size() / 2);
-//     glLineStipple(1, 0xFFFF);
-}
-
-bool
-AirportItem::needsDrawing() const {
-  return !__position.isNull();
-}
-
-const LonLat &
-AirportItem::position() const {
-  return __position;
 }
 
 QString
