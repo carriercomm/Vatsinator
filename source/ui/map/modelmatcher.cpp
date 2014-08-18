@@ -43,9 +43,6 @@ ModelMatcher::~ModelMatcher() {
 
 QOpenGLTexture*
 ModelMatcher::matchMyModel(const QString& _acft) const {
-  if (__modelsPixmaps.isEmpty())
-    __loadPixmaps();
-  
   if (_acft.isEmpty())
     return __modelsPixmaps["1p"];
   
