@@ -29,8 +29,6 @@ Map::Map() :
     __renderer(nullptr) {
   setFlag(QQuickItem::ItemHasContents);
   connect(this, SIGNAL(windowChanged(QQuickWindow*)), SLOT(handleWindowChanged(QQuickWindow*)));
-  connect(vApp()->vatsimDataHandler(),  SIGNAL(vatsimDataUpdated()),
-          this,                         SLOT(update()));
 }
 
 Map::~Map() {
@@ -41,6 +39,7 @@ void
 Map::updateZoom(qreal _factor) {
   if (__renderer)
     __renderer->setZoom(__renderer->zoom() + (_factor * 10));
+  
   if (window())
       window()->update();
 }
@@ -59,6 +58,7 @@ Map::updatePosition(int _x, int _y) {
     
     __renderer->setCenter(center);
   }
+  
   if (window())
       window()->update();
 }
@@ -69,8 +69,6 @@ Map::sync() {
     __renderer = new MapRenderer();
     connect(window(),   SIGNAL(beforeRendering()),
             __renderer, SLOT(paint()),  Qt::DirectConnection);
-    connect(__renderer, SIGNAL(updated()),
-            this,       SLOT(update()));
   }
   
   __renderer->setViewport(window()->size() * window()->devicePixelRatio());
@@ -91,6 +89,9 @@ Map::handleWindowChanged(QQuickWindow* _win) {
             this,       SLOT(sync()), Qt::DirectConnection);
     connect(_win,       SIGNAL(sceneGraphInvalidated()),
             this,       SLOT(cleanup()), Qt::DirectConnection);
+    connect(vApp()->vatsimDataHandler(), 
+                        SIGNAL(vatsimDataUpdated()),
+            _win,       SLOT(update()));
     _win->setClearBeforeRendering(false);
   }
 }

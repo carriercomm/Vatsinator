@@ -129,8 +129,8 @@ FlightItem::drawItem(QOpenGLShaderProgram* _shader) const {
   
   __model->bind();
   glDrawArrays(GL_TRIANGLES, 0, 6);
-  glBindTexture(GL_TEXTURE_2D, 0);
   
+  /* Reset rotation */
   _shader->setUniformValue(__scene->renderer()->programRotationLocation(), 0.0f);
 }
 

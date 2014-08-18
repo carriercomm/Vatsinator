@@ -39,6 +39,8 @@ public:
   Q_INVOKABLE void updateZoom(qreal);
   Q_INVOKABLE void updatePosition(int, int);
   
+  inline MapRenderer* renderer() { return __renderer; }
+  
 public slots:
   void sync();
   void cleanup();

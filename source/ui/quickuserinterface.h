@@ -23,6 +23,7 @@
 #include <QQmlApplicationEngine>
 
 #include "ui/userinterface.h"
+#include "vatsinatorapplication.h"
 
 /**
  * This is the mobile version of the user interface, based on QtQuick.
@@ -51,5 +52,13 @@ private:
   QQmlApplicationEngine __engine;
   
 };
+
+/**
+ * You can use this function to access specific function of QuickUserInterface
+ * implementation as well as check the current ui mode.
+ */
+inline QuickUserInterface* qui() {
+  return dynamic_cast<QuickUserInterface*>(vApp()->userInterface());
+}
 
 #endif // QUICKUSERINTERFACE_H

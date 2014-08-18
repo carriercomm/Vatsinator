@@ -334,7 +334,7 @@ MapRenderer::__drawItems() {
   for (const MapItem* item: __items) {
     QPointF p = glFromLonLat(item->position());
     __texturedProgram->setUniformValue(__texturedPositionLocation, p.x(), p.y());
-    item->drawItem(__texturedProgram);
+    item->drawItem(__texturedProgram);Q_ASSERT(glGetError() == 0);
     if (item->isLabelVisible())
       item->drawLabel(__texturedProgram);
   }
