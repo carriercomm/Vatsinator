@@ -38,7 +38,7 @@ Map::~Map() {
 void
 Map::updateZoom(qreal _factor) {
   if (__renderer)
-    __renderer->setZoom(__renderer->zoom() + (_factor * 10));
+    __renderer->setZoom(__renderer->zoom() + (__renderer->zoom() * _factor));
   
   if (window())
       window()->update();
@@ -48,7 +48,7 @@ void
 Map::updatePosition(int _x, int _y) {
   if (__renderer) {
     LonLat center = __renderer->center();
-    QPoint p(_x, _y);
+    QPoint p(_x, -_y);
     center -= __renderer->scaleToLonLat(p);
     center.ry() = qBound(-90.0, center.y(), 90.0);
     if (center.x() < -180.0)
