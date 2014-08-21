@@ -24,6 +24,7 @@
 #include <QSize>
 #include <QColor>
 #include <QMatrix4x4>
+#include <QOpenGLFunctions>
 #include "vatsimdata/lonlat.h"
 
 class IconKeeper;
@@ -49,6 +50,14 @@ class MapRenderer : public QObject {
    * The center property represents the center of the map.
    */
   Q_PROPERTY(LonLat center READ center WRITE setCenter)
+  
+signals:
+  
+  /**
+   * One or more of the properties have changed and therefore the map needs
+   * to be re-rendered.
+   */
+  void updated();
 
 public:
   
@@ -95,8 +104,12 @@ public:
    */
   QPointF glFromLonLat(const LonLat&);
   
-
-  void setZoom(qreal);
+  /**
+   * Draws the specified item's "under mouse" elements.
+   */
+  void drawFocused(const MapItem*);
+  
+  void setZoom(int);
   void setCenter(const LonLat&);
   
   /**
@@ -120,6 +133,7 @@ public:
   inline IconKeeper* icons() { return __iconKeeper; }
   inline ModelMatcher* models() { return __modelMatcher; }
   inline MapScene* scene() { return __scene; }
+  inline QOpenGLFunctions* opengl() { return __functions; }
   
   /**
    * Vertex attribute location ("vertex").
@@ -139,7 +153,6 @@ private:
   void __drawFirs();
   void __drawUirs();
   void __drawItems();
-  void __drawLines();
   
   void __storeSettings();
   void __restoreSettings();
@@ -165,6 +178,9 @@ private:
   
   /* The center of the map */
   LonLat __center;
+  
+  /* OpenGL functions */
+  QOpenGLFunctions* __functions;
   
   /* World map drawer */
   WorldPolygon* __world;

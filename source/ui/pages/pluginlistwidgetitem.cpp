@@ -1,5 +1,5 @@
 /*
- * flightprogresswidget.cpp
+ * pluginlistwidgetitem.cpp
  * Copyright (C) 2014  Michał Garapich <michal@garapich.pl>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,21 +17,28 @@
  *
  */
 
-#include <QtGlobal>
+#include "pluginlistwidgetitem.h"
 
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets>
-#else
-# include <QtGui>
-#endif
+PluginListWidgetItem::PluginListWidgetItem(const QString& _text,
+                                           QListWidget* _parent,
+                                           int _type):
+    QListWidgetItem(_text, _parent, _type),
+    __simplified(_text.toLower()) {
+  __simplified.replace(' ', QString());
+}
 
-#include "flightprogresswidget.h"
+QVariant
+PluginListWidgetItem::data(int _role) const {
+  if (_role == Qt::UserRole)
+    return __simplified;
+  else
+    return QListWidgetItem::data(_role);
+}
 
-FlightProgressWidget::FlightProgressWidget(QWidget* _parent) :
-    QProgressBar(_parent) {
-  setMaximum(100);
-  setMinimum(0);
-  setTextVisible(false);
-  
-  setValue(50);
+void
+PluginListWidgetItem::setData(int _role, const QVariant& _data) {
+  if (_role == Qt::UserRole)
+    __simplified = _data.toString();
+  else
+    QListWidgetItem::setData(_role, _data);
 }

@@ -777,25 +777,24 @@ VatsimDataHandler::__handleFetchError() {
 
 void
 VatsimDataHandler::__reloadWeatherForecast() {
-//   TODO
-//   QString desired = SM::get("network.weather_forecast_provider").toString();
-//   if (desired != "None") {
-//     if (!__weatherForecast || desired != __weatherForecast->providerName()) {
-//       QList<WeatherForecastInterface*> weatherPlugins =
-//           vApp()->plugins()->plugins<WeatherForecastInterface>();
-//       for (WeatherForecastInterface* w: weatherPlugins) {
-//         if (w->providerName() == desired) {
-//           __weatherForecast = w;
-//           break;
-//         }
-//       }
-//       Q_ASSERT(__weatherForecast->providerName() == desired);
-//       VatsinatorApplication::log("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
-//     }
-//   } else {
-//     __weatherForecast = nullptr;
-//   }
-  __weatherForecast = nullptr;
+  QString desired = SM::get("network.weather_forecast_provider").toString();
+  /* TODO Plugin selection needs to be done better  */
+  if (desired != "none") {
+    if (!__weatherForecast || desired != __weatherForecast->providerName()) {
+      QList<WeatherForecastInterface*> weatherPlugins =
+          vApp()->plugins()->plugins<WeatherForecastInterface>();
+      for (WeatherForecastInterface* w: weatherPlugins) {
+        if (w->providerName() == desired) {
+          __weatherForecast = w;
+          break;
+        }
+      }
+      Q_ASSERT(__weatherForecast->providerName() == desired);
+      VatsinatorApplication::log("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
+    }
+  } else {
+    __weatherForecast = nullptr;
+  }
 }
 
 

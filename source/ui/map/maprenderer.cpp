@@ -45,7 +45,8 @@
 
 MapRenderer::MapRenderer(QObject* _parent) :
     QObject(_parent),
-    __world(new WorldPolygon()),
+    __functions(new QOpenGLFunctions(QOpenGLContext::currentContext())),
+    __world(new WorldPolygon(this)),
     __iconKeeper(new IconKeeper(this)),
     __modelMatcher(new ModelMatcher(this)),
     __scene(new MapScene(this)) {
@@ -81,6 +82,7 @@ MapRenderer::MapRenderer(QObject* _parent) :
 
 MapRenderer::~MapRenderer() {
   __storeSettings();
+  delete __functions;
 }
 
 LonLat
@@ -126,15 +128,37 @@ MapRenderer::glFromLonLat(const LonLat& _point) {
 }
 
 void
-MapRenderer::setZoom(qreal _zoom) {
+
+MapRenderer::drawFocused(const MapItem* _item) {
+  static constexpr GLfloat linesZ = static_cast<GLfloat>(MapConfig::MapLayers::Lines);
+  
+  QMatrix4x4 mvp = __projection * __worldTransform;
+  mvp.translate(QVector3D(0.0f, 0.0f, linesZ));
+  
+  __identityProgram->bind();
+  __texturedProgram->enableAttributeArray(vertexLocation());
+  __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
+  
+  for (float o: __offsets) {
+    __identityProgram->setUniformValue(__identityOffsetLocation, o);
+    _item->drawFocused(__identityProgram);
+  }
+  
+  __identityProgram->release();
+}
+
+void
+MapRenderer::setZoom(int _zoom) {
   __zoom = _zoom;
   __updateScreen();
+  emit updated();
 }
 
 void
 MapRenderer::setCenter(const LonLat& _center) {
   __center = _center;
   __updateScreen();
+  emit updated();
 }
 
 void
@@ -188,6 +212,7 @@ MapRenderer::setViewport(const QSize& _size) {
   
   __updateOffsets();
   __updateScreen();
+  emit updated();
 }
 
 void
@@ -200,6 +225,8 @@ MapRenderer::paint() {
   
   if (__items.isEmpty())
     return;
+  
+  __updateOffsets();
   
   /* Prepare world transform matrix */
   __worldTransform.setToIdentity();
@@ -220,11 +247,6 @@ MapRenderer::paint() {
     __drawUirs();
     __drawFirs();
     __drawItems();
-  }
-  
-  for (float o: __offsets) {
-    __xOffset = o;
-    __drawLines();
   }
   
   __xOffset = 0.0f;
@@ -344,29 +366,6 @@ MapRenderer::__drawItems() {
   __texturedProgram->disableAttributeArray(texcoordLocation());
   __texturedProgram->disableAttributeArray(vertexLocation());
   __texturedProgram->release();
-}
-
-void
-MapRenderer::__drawLines() {
-  static constexpr GLfloat linesZ = static_cast<GLfloat>(MapConfig::MapLayers::Lines);
-  
-//   if (__underMouse) {
-//     QMatrix4x4 mvp = __projection * __worldTransform;
-//     mvp.translate(QVector3D(0.0f, 0.0f, linesZ));
-//     
-//     __identityShader->bind();
-//     __texturedShader->enableAttributeArray(vertexLocation());
-//     __identityShader->setUniformValue(__identityOffsetLocation, __xOffset);
-//     __identityShader->setUniformValue(__identityMatrixLocation, mvp);
-//     
-//     if (const FlightItem* pilot = dynamic_cast<const FlightItem*>(__underMouse)) {
-//       pilot->drawLines(FlightItem::OriginToPilot | FlightItem::PilotToDestination, __identityShader);
-//     } else if (const AirportItem* ap = dynamic_cast<const AirportItem*>(__underMouse)) {
-//       ap->drawLines();
-//     }
-//     
-//     __identityShader->release();
-//   }
 }
 
 void

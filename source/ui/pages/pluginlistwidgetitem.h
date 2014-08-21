@@ -1,6 +1,6 @@
 /*
- * statusfetcherrordialog.cpp
- * Copyright (C) 2013  Michał Garapich <michal@garapich.pl>
+ * pluginlistwidgetitem.h
+ * Copyright (C) 2014  Michał Garapich <michal@garapich.pl>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,27 @@
  *
  */
 
-#include "statusfetcherrordialog.h"
+#ifndef PLUGINLISTWIDGETITEM_H
+#define PLUGINLISTWIDGETITEM_H
 
-StatusFetchErrorDialog::StatusFetchErrorDialog(QWidget* _parent) :
-    QMessageBox(_parent) {
+#include <QListWidgetItem>
+
+/**
+ * The PluginListWidgetItem is a convenience class to represent a single
+ * plugin on the plugin list. It provides simplified name under
+ * Qt::UserRole.
+ */
+class PluginListWidgetItem : public QListWidgetItem {
+
+public:
+  explicit PluginListWidgetItem(const QString&, QListWidget* = 0, int = Type);
   
-  setText(tr("Vatsinator was unable to fetch the status.txt file."));
-  setInformativeText(tr("It means that no data can be obtained at all. Check your "
-    "internet connection and the accessibility of Vatsim servers."));
-  setIcon(QMessageBox::Critical);
-  addButton(QMessageBox::Ok);
-}
+  QVariant data(int) const override;
+  void setData(int, const QVariant&) override;
+  
+private:
+  QString __simplified;
+  
+};
+
+#endif // PLUGINLISTWIDGETITEM_H

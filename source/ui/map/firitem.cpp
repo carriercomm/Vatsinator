@@ -18,9 +18,9 @@
  */
 
 #include <QtCore>
+#include <QtOpenGL>
 
 #include "db/firdatabase.h"
-#include "glutils/glextensions.h"
 #include "glutils/texture.h"
 #include "storage/settingsmanager.h"
 #include "ui/map/mapconfig.h"
@@ -132,6 +132,10 @@ void FirItem::drawLabel(QOpenGLShaderProgram*) const {
   
 }
 
+void FirItem::drawFocused(QOpenGLShaderProgram*) const {
+
+}
+
 QString
 FirItem::tooltipText() const {
   QString desc;
@@ -189,8 +193,8 @@ FirItem::__initializeBuffers() {
   Q_ASSERT(__vaoBorders.isCreated());
   __vaoBorders.bind();
   __borders.bind();
-  glVertexAttribPointer(MapRenderer::vertexLocation(), 2, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(MapRenderer::vertexLocation());
+  __scene->renderer()->opengl()->glVertexAttribPointer(MapRenderer::vertexLocation(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+  __scene->renderer()->opengl()->glEnableVertexAttribArray(MapRenderer::vertexLocation());
   __vaoBorders.release();
   __borders.release();
   __triangles.release();
@@ -200,8 +204,8 @@ FirItem::__initializeBuffers() {
   __vaoTriangles.bind();
   __borders.bind();
   __triangles.bind();
-  glVertexAttribPointer(MapRenderer::vertexLocation(), 2, GL_FLOAT, GL_FALSE, 0, 0);
-  glEnableVertexAttribArray(MapRenderer::vertexLocation());
+  __scene->renderer()->opengl()->glVertexAttribPointer(MapRenderer::vertexLocation(), 2, GL_FLOAT, GL_FALSE, 0, 0);
+  __scene->renderer()->opengl()->glEnableVertexAttribArray(MapRenderer::vertexLocation());
   __vaoTriangles.release();
   __borders.release();
   __triangles.release();
