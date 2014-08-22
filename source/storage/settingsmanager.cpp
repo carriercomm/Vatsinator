@@ -19,7 +19,6 @@
 #include <QtCore>
 
 #include "storage/abstractsettingsmodule.h"
-#include "ui/windows/settingswindow.h"
 #include "ui/userinterface.h"
 #include "vatsinatorapplication.h"
 
@@ -158,7 +157,7 @@ SettingsManager::__fillDefaults() {
   __defaults["network.refresh_metars"] = true;
   __defaults["network.cache_enabled"] = true;
   __defaults["network.database_integration"] = true;
-  __defaults["network.weather_forecast_provider"] = QString();
+  __defaults["network.weather_forecast_provider"] = QString("none");
   __defaults["network.weather_temperature_units"] = "Celsius";
   
   __defaults["view.pilots_layer"] = true;

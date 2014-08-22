@@ -148,7 +148,7 @@ MapRenderer::drawFocused(const MapItem* _item) {
 }
 
 void
-MapRenderer::setZoom(int _zoom) {
+MapRenderer::setZoom(qreal _zoom) {
   __zoom = _zoom;
   __updateScreen();
   emit updated();

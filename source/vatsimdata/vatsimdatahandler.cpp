@@ -27,8 +27,6 @@
 #include "network/plaintextdownloader.h"
 #include "plugins/weatherforecastinterface.h"
 #include "modules/modulemanager.h"
-#include "ui/pages/miscellaneouspage.h"
-#include "ui/windows/vatsinatorwindow.h"
 #include "ui/widgetsuserinterface.h"
 #include "storage/cachefile.h"
 #include "storage/pluginmanager.h"

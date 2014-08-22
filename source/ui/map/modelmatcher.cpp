@@ -22,7 +22,6 @@
 #include "glutils/glresourcemanager.h"
 #include "ui/widgets/mapwidget.h"
 #include "glutils/texture.h"
-#include "ui/windows/vatsinatorwindow.h"
 #include "ui/widgetsuserinterface.h"
 #include "vatsimdata/vatsimdatahandler.h"
 #include "storage/filemanager.h"

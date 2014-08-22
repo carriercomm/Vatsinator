@@ -21,12 +21,15 @@
 #include <qjson/parser.h>
 
 #include "storage/settingsmanager.h"
-#include "ui/dialogs/letsendstatsdialog.h"
 #include "ui/userinterface.h"
 #include "vatsimdata/vatsimdatahandler.h"
 #include "config.h"
 #include "netconfig.h"
 #include "vatsinatorapplication.h"
+
+#ifndef Q_OS_ANDROID
+# include "ui/dialogs/letsendstatsdialog.h"
+#endif
 
 #include "statspurveyor.h"
 
@@ -115,15 +118,18 @@ StatsPurveyor::StatsPurveyor(QObject* _parent) :
   
   QSettings s;
   if (!s.contains("Decided/stats") && false) { // no decision made yet
-//     LetSendStatsDialog* dialog = new LetSendStatsDialog();
-//     dialog->setAttribute(Qt::WA_DeleteOnClose);
-//     connect(dialog,     SIGNAL(accepted()),
-//             this,       SLOT(__statsAccepted()));
-//     connect(dialog,     SIGNAL(rejected()),
-//             this,       SLOT(__statsRejected()));
-//     connect(vApp()->userInterface(),    SIGNAL(initialized()),
-//             dialog,                     SLOT(show()));
-//     QTimer::singleShot(StartDelay, this, SLOT(reportStartup()));
+#ifndef Q_OS_ANDROID
+    // TODO android
+    LetSendStatsDialog* dialog = new LetSendStatsDialog();
+    dialog->setAttribute(Qt::WA_DeleteOnClose);
+    connect(dialog,     SIGNAL(accepted()),
+            this,       SLOT(__statsAccepted()));
+    connect(dialog,     SIGNAL(rejected()),
+            this,       SLOT(__statsRejected()));
+    connect(vApp()->userInterface(),    SIGNAL(initialized()),
+            dialog,                     SLOT(show()));
+    QTimer::singleShot(StartDelay, this, SLOT(reportStartup()));
+#endif
   } else {
     bool accepted = s.value("Settings/misc/send_statistics", false).toBool();
     if (accepted) {

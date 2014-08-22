@@ -109,7 +109,7 @@ public:
    */
   void drawFocused(const MapItem*);
   
-  void setZoom(int);
+  void setZoom(qreal);
   void setCenter(const LonLat&);
   
   /**

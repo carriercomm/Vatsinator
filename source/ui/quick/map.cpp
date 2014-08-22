@@ -37,8 +37,9 @@ Map::~Map() {
 
 void
 Map::updateZoom(qreal _factor) {
-  if (__renderer)
-    __renderer->setZoom(__renderer->zoom() + (__renderer->zoom() * _factor));
+  if (__renderer) {
+    __renderer->setZoom(__renderer->zoom() + __renderer->zoom() * _factor);
+  }
   
   if (window())
       window()->update();

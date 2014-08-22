@@ -24,9 +24,6 @@ if (POLICY CMP0028)
   cmake_policy (SET CMP0028 NEW)
 endif (POLICY CMP0028)
 
-if (MINGW)
-    set (WIN32 1)
-endif (MINGW)
 if (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
     set (LINUX 1)
 endif (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
@@ -59,6 +56,10 @@ if (NOT FORCE_QT4)
 endif (NOT FORCE_QT4)
 
 if (NOT Qt5Core_FOUND)
+  if (ANDROID)
+    message (FATAL_ERROR "Sorry, Android builds are supported only with Qt5.")
+  endif (ANDROID)
+
   find_package (Qt4 4.8 COMPONENTS QtCore QtGui QtOpenGL QtXml QtNetwork REQUIRED)
   include(${QT_USE_FILE})
 endif (NOT Qt5Core_FOUND)
@@ -71,12 +72,6 @@ if (NOT ANDROID)
 endif (NOT ANDROID)
 find_package (QuaZip REQUIRED)
 find_package (QJSON REQUIRED)
-
-if (UNIX AND NOT APPLE AND NOT MINGW)
-    set (LINUX 1)
-endif (UNIX AND NOT APPLE AND NOT MINGW)
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 
 # set CMAKE_BUILD_TYPE
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -132,6 +127,7 @@ endif (APPLE)
 
 include (VatsinatorInstall)
 
+include_directories(${QJSON_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
 if (NOT APPLE)
