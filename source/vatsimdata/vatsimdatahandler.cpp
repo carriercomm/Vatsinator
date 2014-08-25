@@ -158,7 +158,7 @@ void
 VatsimDataHandler::parseDataFile(const QString& _data) {
   static QRegExp rx("^\\b(UPDATE|RELOAD|CONNECTED CLIENTS)\\b\\s?=\\s?\\b(.+)\\b$");
 
-  VatsinatorApplication::log("Data length: %i.", _data.length());
+  qDebug("Data length: %i.", _data.length());
 
   QStringList tempList = _data.split(QRegExp("\r?\n"), QString::SkipEmptyParts);  
   DataSections section = None;
@@ -481,7 +481,7 @@ VatsimDataHandler::requestDataUpdate() {
 
 void
 VatsimDataHandler::__readAliasFile(const QString& _fName) {
-  VatsinatorApplication::log("Reading \"alias\" file...");
+  qDebug("Reading \"alias\" file...");
   
   QFile file(_fName);
   
@@ -521,12 +521,12 @@ VatsimDataHandler::__readAliasFile(const QString& _fName) {
   
   file.close();
   
-  VatsinatorApplication::log("Finished reading \"alias\" file.");
+  qDebug("Finished reading \"alias\" file.");
 }
 
 void
 VatsimDataHandler::__readCountryFile(const QString& _fName) {
-  VatsinatorApplication::log("Reading \"country\" file...");
+  qDebug("Reading \"country\" file...");
   
   QFile file(_fName);
   
@@ -554,12 +554,12 @@ VatsimDataHandler::__readCountryFile(const QString& _fName) {
   
   file.close();
   
-  VatsinatorApplication::log("Finished reading \"country\" file.");
+  qDebug("Finished reading \"country\" file.");
 }
 
 void
 VatsimDataHandler::__readFirFile(const QString& _fName) {
-  VatsinatorApplication::log("Reading \"fir\" file...");
+  qDebug("Reading \"fir\" file...");
   
   QFile file(_fName);
   
@@ -611,12 +611,12 @@ VatsimDataHandler::__readFirFile(const QString& _fName) {
   
   file.close();
   
-  VatsinatorApplication::log("Finished reading \"fir\" file.");
+  qDebug("Finished reading \"fir\" file.");
 }
 
 void
 VatsimDataHandler::__readUirFile(const QString& _fileName) {
-  VatsinatorApplication::log("Reading \"uir\" file...");
+  qDebug("Reading \"uir\" file...");
   
   QFile file(_fileName);
   
@@ -650,7 +650,7 @@ VatsimDataHandler::__readUirFile(const QString& _fileName) {
   
   file.close();
   
-  VatsinatorApplication::log("Finished reading \"uir\" file.");
+  qDebug("Finished reading \"uir\" file.");
 }
 
 void
@@ -681,13 +681,13 @@ VatsimDataHandler::__clearData() {
 
 void
 VatsimDataHandler::__loadCachedData() {
-  VatsinatorApplication::log("VatsimDataHandler: loading data from cache...");
+  qDebug("VatsimDataHandler: loading data from cache...");
   
   CacheFile file(CacheFileName);
   if (file.exists()) {
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-      VatsinatorApplication::log("VatsimDataHandler: cache file %s is not readable.",
-                                 qPrintable(file.fileName()));
+      qWarning("VatsimDataHandler: cache file %s is not readable.",
+               qPrintable(file.fileName()));
       return;
     }
     
@@ -696,7 +696,7 @@ VatsimDataHandler::__loadCachedData() {
     parseDataFile(data);
   }
   
-  VatsinatorApplication::log("VatsimDataHandler: cache restored.");
+  qDebug("VatsimDataHandler: cache restored.");
 }
 
 void
@@ -733,7 +733,7 @@ VatsimDataHandler::__slotUiCreated() {
 
 void
 VatsimDataHandler::__beginDownload() {
-  VatsinatorApplication::log("VatsimDataHandler: starting download.");
+  qDebug("VatsimDataHandler: starting download.");
   __downloader->fetchData(getDataUrl());
 }
 
@@ -788,7 +788,7 @@ VatsimDataHandler::__reloadWeatherForecast() {
         }
       }
       Q_ASSERT(__weatherForecast->providerName() == desired);
-      VatsinatorApplication::log("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
+      qDebug("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
     }
   } else {
     __weatherForecast = nullptr;

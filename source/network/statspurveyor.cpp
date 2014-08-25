@@ -202,7 +202,7 @@ StatsPurveyor::__parseResponse() {
     if (!__requests.isEmpty())
         __nextRequest(); 
   } else {
-    VatsinatorApplication::log("StatsPurveyor: query failed; retry in 1 minute...");
+    qWarning("StatsPurveyor: query failed; retry in 1 minute...");
     QTimer::singleShot(RetryDelay, this, SLOT(__nextRequest()));
     __reply->deleteLater();
     __reply = nullptr;
@@ -216,7 +216,7 @@ StatsPurveyor::__nextRequest() {
   if (__userDecision == NotYetMade)
     return;
   
-  VatsinatorApplication::log("StatsPurveyor: request: %s", qPrintable(__requests.head().url().toString()));
+  qDebug("StatsPurveyor: request: %s", qPrintable(__requests.head().url().toString()));
   
   __reply = __nam.get(__requests.head());
   connect(__reply,      SIGNAL(finished()),
