@@ -52,30 +52,41 @@ function (install_android_qt_qmls)
   set (QT_ANDROID_XML_bundled_in_lib "${QT_ANDROID_XML_bundled_in_lib}")
   set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}")
   foreach (QML ${ARGV})
-    install (FILES ${QT_INSTALL_QML_DIR}/${QML}
-      DESTINATION libs/${ANDROID_ABI})
-    
-    get_filename_component (QML_FILE ${QML} NAME)
-    get_filename_component (QML_PATH ${QML} PATH)
-    
-    set (QT_ANDROID_XML_bundled_in_lib "${QT_ANDROID_XML_bundled_in_lib}
-        <item>${QML_FILE}:qml/${QML}</item>")
-    
-    install (FILES
-        ${QT_INSTALL_QML_DIR}/${QML_PATH}/qmldir
-      DESTINATION assets/qml/${QML_PATH})
-    
-    set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}
-        <item>qml/${QML_PATH}/qmldir:qml/${QML_PATH}/qmldir</item>")
-    
-    if (EXISTS ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes)
+    if (${QML} MATCHES "/$") # directory
+      install (DIRECTORY ${QT_INSTALL_QML_DIR}/${QML}
+        DESTINATION assets/qml/${QML})
+      
+      file (GLOB_RECURSE QML_FILES RELATIVE ${QT_INSTALL_QML_DIR} ${QT_INSTALL_QML_DIR}/${QML}*)
+      foreach (QML_FILE ${QML_FILES})
+        set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}
+            <item>qml/${QML_FILE}:qml/${QML_FILE}</item>")
+      endforeach (QML_FILE)
+      
+    else (${QML} MATCHES "/$") # .so file
+      install (FILES ${QT_INSTALL_QML_DIR}/${QML}
+        DESTINATION libs/${ANDROID_ABI})
+      
+      get_filename_component (QML_FILE ${QML} NAME)
+      get_filename_component (QML_PATH ${QML} PATH)
+      
+      set (QT_ANDROID_XML_bundled_in_lib "${QT_ANDROID_XML_bundled_in_lib}
+          <item>${QML_FILE}:qml/${QML}</item>")
+      
       install (FILES
-          ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes
+          ${QT_INSTALL_QML_DIR}/${QML_PATH}/qmldir
         DESTINATION assets/qml/${QML_PATH})
+      
       set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}
-        <item>qml/${QML_PATH}/plugins.qmltypes:qml/${QML_PATH}/plugins.qmltypes</item>")
-    endif (EXISTS ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes)  
-    
+          <item>qml/${QML_PATH}/qmldir:qml/${QML_PATH}/qmldir</item>")
+      
+      if (EXISTS ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes)
+        install (FILES
+            ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes
+          DESTINATION assets/qml/${QML_PATH})
+        set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}
+          <item>qml/${QML_PATH}/plugins.qmltypes:qml/${QML_PATH}/plugins.qmltypes</item>")
+      endif (EXISTS ${QT_INSTALL_QML_DIR}/${QML_PATH}/plugins.qmltypes)
+    endif (${QML} MATCHES "/$")
   endforeach (QML)
   set (QT_ANDROID_XML_bundled_in_lib "${QT_ANDROID_XML_bundled_in_lib}" PARENT_SCOPE)
   set (QT_ANDROID_XML_bundled_in_assets "${QT_ANDROID_XML_bundled_in_assets}" PARENT_SCOPE)

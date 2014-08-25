@@ -75,6 +75,7 @@ install_android_qt_plugins (
 install_android_qt_qmls (
   Qt/labs/folderlistmodel/libqmlfolderlistmodelplugin.so
   Qt/labs/settings/libqmlsettingsplugin.so
+  QtGraphicalEffects/
   QtQml/Models.2/libmodelsplugin.so
   QtQuick/Controls/libqtquickcontrolsplugin.so
   QtQuick/Dialogs/libdialogplugin.so

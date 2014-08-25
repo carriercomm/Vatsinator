@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="qmls">
     <file>AboutDialog.qml</file>
+    <file>ic_drawer.png</file>
     <file>vatsinator.qml</file>
   </qresource>
 </RCC>
