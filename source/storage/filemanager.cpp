@@ -24,29 +24,14 @@
 
 #include "storage/filemanager.h"
 
-static const QString LocalDataLocation =
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    QDir::cleanPath(
-        QStandardPaths::writableLocation(QStandardPaths::DataLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    ) % QDir::separator();
-#else
-    QDir::cleanPath(
-      QDesktopServices::storageLocation(QDesktopServices::DataLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    ) % QDir::separator();
-#endif
-
 
 FileManager::FileManager() {
-  qDebug("FileManager: local data location: %s", qPrintable(LocalDataLocation));
+  qDebug("FileManager: local data location: %s", qPrintable(localDataPath()));
   
   // ensure that our data directory exists
-  QDir dir(LocalDataLocation);
+  QDir dir(localDataPath());
   if (!dir.exists()) {
-    qDebug("FileManager: creating directory %s", qPrintable(LocalDataLocation));
+    qDebug("FileManager: creating directory %s", qPrintable(localDataPath()));
     dir.mkpath(".");
   }
 }
@@ -115,7 +100,7 @@ FileManager::staticPath(FileManager::StaticDir _d) {
 QString
 FileManager::path(const QString& _f) {
   
-  QFile tryLocal(LocalDataLocation % _f);
+  QFile tryLocal(localDataPath() % _f);
   if (tryLocal.exists()) {
     qDebug("FileManager: file %s loaded from %s.",
            qPrintable(_f), qPrintable(tryLocal.fileName()));
@@ -135,5 +120,20 @@ FileManager::path(const QString& _f) {
 
 QString
 FileManager::localDataPath() {
+  static const QString LocalDataLocation =
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    QDir::cleanPath(
+        QStandardPaths::writableLocation(QStandardPaths::DataLocation)
+      % QDir::separator()
+      % "Vatsinator"
+    ) % QDir::separator();
+#else
+    QDir::cleanPath(
+      QDesktopServices::storageLocation(QDesktopServices::DataLocation)
+      % QDir::separator()
+      % "Vatsinator"
+    ) % QDir::separator();
+#endif
+    
   return LocalDataLocation;
 }

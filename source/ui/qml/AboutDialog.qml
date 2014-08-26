@@ -1,5 +1,5 @@
 /*
- * vatsinator.qml
+ * AboutDialog.qml
  * Copyright (C) 2014  Michał Garapich <michal@garapich.pl>
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@
 import QtQuick 2.2
 import QtQuick.Dialogs 1.1
 
+// TODO mage this something different that MessageDialog
+// dunno what yet
 MessageDialog {
   title: qsTr("About Vatsinator")
   text: qsTr("Vatsinator is an open-source Vatsim network monitor.")

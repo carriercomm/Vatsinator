@@ -19,13 +19,11 @@
 
 import QtQuick 2.2
 import QtQuick.Controls 1.2
-import QtGraphicalEffects 1.0
 import VatsinatorQML 1.0
 
 ApplicationWindow {
   id: vatsinatorWindow
-  
-  
+    
   height: 480
   title: "Vatsinator"
   width: 320
@@ -42,7 +40,6 @@ ApplicationWindow {
     anchors.fill: parent
     
     onPinchUpdated: {
-//       console.log(pinch.scale)
       map.updateZoom(pinch.scale - pinch.previousScale)
     }
     
@@ -66,42 +63,8 @@ ApplicationWindow {
     }
   }
   
-  Item {
-    height: 130
-    width: 56
-    anchors {
-      bottom: parent.bottom
-      bottomMargin: parent.height / 20
-    }
-    
-    RectangularGlow {
-      anchors.fill: parent
-      glowRadius: 1.0
-      color: "#393939"
-      cornerRadius: 11
-      anchors.leftMargin: menuDrawer.anchors.leftMargin
-    }
-    
-    Rectangle {
-      id: menuDrawer
-      
-      color: "white"
-      border.width: 0
-      radius: 10
-      height: 128
-      width: 64
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.leftMargin: -10
-      
-      Image {
-        width: 48
-        height: 48
-        fillMode: Image.Stretch
-        source: "ic_drawer.png"
-        anchors.centerIn: parent
-      }
-    }
+  MainMenu {
+    id: mainMenu
   }
   
   Component.onCompleted: visible = true
