@@ -34,6 +34,13 @@ Item {
     opacity: 0.8
   }
   
+  /* Menu container shadow */
+  RectangularGlow {
+    anchors.fill: container
+    glowRadius: 30.0
+    color: "#262626"
+    cornerRadius: 0
+  }
   
   /* Menu container */
   Rectangle {
@@ -43,6 +50,16 @@ Item {
     anchors.rightMargin: parent.width * 0.1
     color: "#262626"
     
+    ListView {
+      anchors.fill: parent
+      anchors.margins: 10
+      
+      model: MenuModel {}
+      delegate: Text {
+        color: "#E5E5E5"
+        text: name
+      }
+    }
   }
   
   /* Menu drawer */
@@ -90,31 +107,33 @@ Item {
     
     MouseArea {
       anchors.fill: parent
-      onClicked: {
-        root.state = "shown"
-        drawerContainer.visible = false
-      }
+      onClicked: root.state = "shown"
     }
   }
   
   MouseArea {
     anchors {
-      left: container.left
+      left: container.right
       right: root.right
       bottom: root.bottom
       top: root.top
     }
     
-    onClicked: {
+    onClicked: root.state = ""
+  }
+  
+  Keys.onReleased: {
+    if (event.key == Qt.Key_Back) {
       root.state = ""
-      drawerContainer.visible = true
+      event.accepted = true
     }
   }
   
   states: [
     State {
       name: "shown"
-      PropertyChanges { target: root; x: 0 }
+      PropertyChanges { target: root; x: 0; focus: true }
+      PropertyChanges { target: drawerContainer; visible: false }
     }
   ]
   
