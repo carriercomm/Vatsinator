@@ -17,8 +17,7 @@
  *
  */
 
-#include <QtGlobal>
-#include <QtOpenGL>
+#include <QtGui>
 
 #include "db/airportdatabase.h"
 #include "storage/settingsmanager.h"

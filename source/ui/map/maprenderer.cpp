@@ -18,7 +18,6 @@
  */
 
 #include <QtGui>
-#include <QtOpenGL>
 
 #include "storage/settingsmanager.h"
 #include "ui/map/airportitem.h"

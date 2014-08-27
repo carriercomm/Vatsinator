@@ -20,7 +20,7 @@
 #ifndef AIRPORTITEM_H
 #define AIRPORTITEM_H
 
-#include <QtOpenGL>
+#include <QtGui>
 #include <QObject>
 #include <QVector>
 

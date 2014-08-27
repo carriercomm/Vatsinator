@@ -22,10 +22,11 @@
 
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QProgressBar>
 #include <QObject>
 #include <QQueue>
 #include <QUrl>
+
+class QProgressBar;
 
 class PlainTextDownloader : public QObject {
   
@@ -42,16 +43,25 @@ signals:
 
 public:
 
-  PlainTextDownloader(QProgressBar* = 0, QObject* = 0);
+  PlainTextDownloader(QObject* = 0);
 
   void fetchData(const QString&);
   
+  /**
+   * Available only on desktop.
+   */
   inline QProgressBar *
   progressBar() { return __progressBar; }
   
+  /**
+   * Available only on desktop.
+   */
   inline const QProgressBar *
   progressBar() const { return __progressBar; }
   
+  /**
+   * Available only on desktop.
+   */
   inline void
   setProgressBar(QProgressBar* _pb) { __progressBar = _pb; }
   

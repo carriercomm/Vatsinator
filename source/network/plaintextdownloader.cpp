@@ -16,6 +16,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QtCore>
+
+#ifndef Q_OS_ANDROID
+# include <QProgressBar>
+#endif
+
 #include <QtNetwork>
 
 #include "config.h"
@@ -23,9 +29,9 @@
 
 #include "plaintextdownloader.h"
 
-PlainTextDownloader::PlainTextDownloader(QProgressBar* _pb, QObject* _parent) :
+PlainTextDownloader::PlainTextDownloader(QObject* _parent) :
     QObject(_parent),
-    __progressBar(_pb),
+    __progressBar(nullptr),
     __reply(nullptr) {}
 
 void
@@ -63,11 +69,13 @@ PlainTextDownloader::__startRequest() {
   connect(__reply, SIGNAL(finished()), this, SLOT(__finished()));
   connect(__reply, SIGNAL(readyRead()), this, SLOT(__readyRead()));
   
+#ifndef Q_OS_ANDROID
   if (__progressBar) {
     connect(__reply, SIGNAL(downloadProgress(qint64, qint64)),
             this,    SLOT(__updateProgress(qint64, qint64)));
     __progressBar->setEnabled(true);
   }
+#endif
 }
 
 void
@@ -77,11 +85,12 @@ PlainTextDownloader::__readyRead() {
 
 void
 PlainTextDownloader::__finished() {
-  
+#ifndef Q_OS_ANDROID
   if (__progressBar) {
     __progressBar->reset();
     __progressBar->setEnabled(false);
   }
+#endif
   
   if (__reply->error() == QNetworkReply::NoError) {
     qDebug("PlainTextDownloader: %s: finished",
@@ -105,6 +114,8 @@ PlainTextDownloader::__finished() {
 
 void
 PlainTextDownloader::__updateProgress(qint64 _bRead, qint64 _bTotal) {
+#ifndef Q_OS_ANDROID
   __progressBar->setMaximum(_bTotal);
   __progressBar->setValue(_bRead);
+#endif
 }

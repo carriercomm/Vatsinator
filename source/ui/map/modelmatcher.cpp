@@ -16,12 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtWidgets>
+#include <QtCore>
 #include <QOpenGLTexture>
 
-#include "glutils/glresourcemanager.h"
-#include "ui/widgets/mapwidget.h"
-#include "glutils/texture.h"
 #include "ui/widgetsuserinterface.h"
 #include "vatsimdata/vatsimdatahandler.h"
 #include "storage/filemanager.h"

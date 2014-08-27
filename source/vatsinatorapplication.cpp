@@ -46,7 +46,11 @@
 #include "vatsinatorapplication.h"
 
 VatsinatorApplication::VatsinatorApplication(int& _argc, char** _argv) :
+#ifndef Q_OS_ANDROID
     QApplication(_argc, _argv),
+#else
+    QGuiApplication(_argc, _argv),
+#endif
     __userInterface(new VATSINATOR_UI_IMPLEMENTATION()),
     __fileManager(new FileManager()),
     __settingsManager(new SettingsManager()),

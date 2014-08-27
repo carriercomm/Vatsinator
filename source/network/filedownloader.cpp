@@ -16,14 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QtGlobal>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-# include <QtWidgets>
-#else
-# include <QtGui>
-#endif
-
+#include <QtCore>
 #include <QtNetwork>
 
 #include "config.h"
@@ -31,9 +24,8 @@
 
 #include "filedownloader.h"
 
-FileDownloader::FileDownloader(QProgressBar* _pb, QObject* _parent) :
+FileDownloader::FileDownloader(QObject* _parent) :
     QObject(_parent),
-    __pb(_pb), 
     __reply(nullptr) {}
 
 void
@@ -97,12 +89,6 @@ FileDownloader::__startRequest() {
           this,         SLOT(__finished()));
   connect(__reply,      SIGNAL(readyRead()),
           this,         SLOT(__readyRead()));
-  
-  if (__pb) {
-    connect(__reply,    SIGNAL(downloadProgress(qint64,qint64)),
-            this,       SLOT(__updateProgress(qint64, qint64)));
-    __pb->setEnabled(true);
-  }
 }
 
 void
@@ -114,11 +100,6 @@ void
 FileDownloader::__finished() {
   qint64 size = __output.size();
   __output.close();
-  
-  if (__pb) {
-    __pb->reset();
-    __pb->setEnabled(false);
-  }
   
   if (__reply->error()) {
     emit error(tr("Error downloading file: %1").arg(__reply->errorString()));
@@ -135,10 +116,4 @@ FileDownloader::__finished() {
   __reply = nullptr;
   
   __startRequest();
-}
-
-void
-FileDownloader::__updateProgress(qint64 _read, qint64 _total) {
-  __pb->setMaximum(_total);
-  __pb->setValue(_read);
 }

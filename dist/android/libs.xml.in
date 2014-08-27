@@ -13,9 +13,7 @@
         <item>gnustl_shared</item>
         <item>Qt5Core</item>
         <item>Qt5Gui</item>
-        <item>Qt5Widgets</item>
         <item>Qt5Xml</item>
-        <item>Qt5OpenGL</item>
         <item>Qt5Network</item>
         <item>Qt5Quick</item>
         <item>Qt5Qml</item>

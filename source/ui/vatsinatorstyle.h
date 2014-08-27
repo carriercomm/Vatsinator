@@ -20,8 +20,11 @@
 #ifndef VATSINATORSTYLE_H
 #define VATSINATORSTYLE_H
 
-#include <QProxyStyle>
-#include <QFont>
+#include <QtGlobal>
+#ifndef Q_OS_ANDROID
+
+# include <QProxyStyle>
+# include <QFont>
 
 class VatsinatorStyle : public QProxyStyle {
   Q_OBJECT
@@ -37,5 +40,7 @@ public:
 #endif
   
 };
+
+#endif // Q_OS_ANDROID
 
 #endif // VATSINATORSTYLE_H

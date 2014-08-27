@@ -13,7 +13,6 @@ set (vatsinator_SRCS
 set (vatsinator_SUBDIRS
     db
     events
-    glutils
     modules
     network
     plugins
@@ -93,7 +92,6 @@ elseif (ANDROID)
     set (vatsinator_LIBS
         Qt5::Network
         Qt5::Xml
-        Qt5::OpenGL
         Qt5::Quick
         ${QUAZIP_LIBRARIES}
         ${QJSON_LIBRARIES}

@@ -21,7 +21,11 @@
 #define MAPCONFIG_H
 
 #include <QtGlobal> // qreal
-#include <QGLFormat> // glFormat
+#include <QImage>
+
+#ifndef Q_OS_ANDROID
+# include <QGLFormat> // glFormat
+#endif
 
 class QColor;
 class QFont;
@@ -70,7 +74,9 @@ public:
     return 1.1;
   }
   
+#ifndef Q_OS_ANDROID
   static const QGLFormat& glFormat();
+#endif
   
   static const QString& emptyAirportIcon();
   static const QString& activeAirportIcon();

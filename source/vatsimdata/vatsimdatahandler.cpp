@@ -44,6 +44,10 @@
 #include "netconfig.h"
 #include "vatsinatorapplication.h"
 
+#ifndef Q_OS_ANDROID
+# include "ui/windows/vatsinatorwindow.h"
+#endif
+
 #include "vatsimdatahandler.h"
 
 using std::for_each;

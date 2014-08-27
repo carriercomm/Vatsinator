@@ -34,7 +34,7 @@ namespace {
 
 VatbookHandler::VatbookHandler(QObject* _parent) : 
     QObject(_parent),
-    __downloader(new PlainTextDownloader(nullptr, this)) {
+    __downloader(new PlainTextDownloader(this)) {
   
   connect(__downloader,    SIGNAL(finished(const QString&)),
           this,             SLOT(__dataFetched(const QString&)));

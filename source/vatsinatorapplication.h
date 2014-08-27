@@ -20,10 +20,17 @@
 #ifndef VATSINATORAPPLICATION_H
 #define VATSINATORAPPLICATION_H
 
-#include <QApplication>
+#include <QtGlobal>
+
+#ifndef Q_OS_ANDROID
+# include <QApplication>
+# include <QProxyStyle>
+#else
+# include <QGuiApplication>
+#endif
+
 #include <QFont>
 #include <QMutex>
-#include <QProxyStyle>
 #include <iostream>
 
 #include "singleton.h"
@@ -43,7 +50,13 @@ class UserInterface;
 class VatsimDataHandler;
 class WorldMap;
 
-class VatsinatorApplication : public QApplication {
+class VatsinatorApplication : public
+#ifndef Q_OS_ANDROID
+    QApplication
+#else
+    QGuiApplication
+#endif
+{
 
   Q_OBJECT
   

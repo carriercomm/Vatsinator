@@ -20,7 +20,7 @@
 #ifndef APPROACHCIRCLEITEM_H
 #define APPROACHCIRCLEITEM_H
 
-#include <QtOpenGL>
+#include <QtGui>
 #include <QObject>
 
 #include "ui/map/mapitem.h"

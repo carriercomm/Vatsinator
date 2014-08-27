@@ -34,24 +34,28 @@ option (FORCE_QT4 "Force building with Qt4 even if Qt5 is available" OFF)
 if (NOT FORCE_QT4)
   find_package (Qt5Core QUIET)
   if (Qt5Core_FOUND)
-    find_package (Qt5Widgets REQUIRED)
-    find_package (Qt5OpenGL REQUIRED)
+    find_package (Qt5Gui REQUIRED)
     find_package (Qt5Xml REQUIRED)
     find_package (Qt5Network REQUIRED)
     
-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-    include_directories(${Qt5Core_INCLUDE_DIRS})
-    include_directories(${Qt5Widgets_INCLUDE_DIRS})
-    include_directories(${Qt5OpenGL_INCLUDE_DIRS})
     include_directories(${Qt5Network_INCLUDE_DIRS})
     include_directories(${Qt5Xml_INCLUDE_DIRS})
     
     if (ANDROID)
       find_package (Qt5Quick REQUIRED)
       include_directories(${Qt5Quick_INCLUDE_DIRS})
+    else (ANDROID)
+      find_package (Qt5Widgets REQUIRED)
+      find_package (Qt5OpenGL REQUIRED)
+      include_directories(${Qt5Widgets_INCLUDE_DIRS})
+      include_directories(${Qt5OpenGL_INCLUDE_DIRS})
     endif (ANDROID)
     
     get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+    
+    if (Qt5_POSITION_INDEPENDENT_CODE)
+      set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    endif()
   endif (Qt5Core_FOUND)
 endif (NOT FORCE_QT4)
 
@@ -81,7 +85,7 @@ else (CMAKE_BUILD_TYPE MATCHES Debug)
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
 # set CXX_FLAGS
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set (CMAKE_CXX_FLAGS_RELEASE "-DQT_NO_DEBUG -DQT_NO_DEBUG_OUTPUT")
 set (CMAKE_CXX_FLAGS_DEBUG "-g -Wall")
 
@@ -152,7 +156,6 @@ if (LINUX)
 
     # Spec file
     option (WITH_RPM "Create RPM package" OFF)
-    add_subdirectory (dist)
 
 elseif (APPLE)
     
@@ -171,9 +174,7 @@ elseif (ANDROID)
 
     get_target_property(QtCore_location Qt5::Core LOCATION)
     get_target_property(QtGui_location Qt5::Gui LOCATION)
-    get_target_property(QtWidgets_location Qt5::Widgets LOCATION)
     get_target_property(QtNetwork_location Qt5::Network LOCATION)
-    get_target_property(QtOpenGL_location Qt5::OpenGL LOCATION)
     get_target_property(QtXml_location Qt5::Xml LOCATION)
     get_target_property(QtQuick_location Qt5::Quick LOCATION)
     get_target_property(QtQml_location Qt5::Qml LOCATION)
@@ -182,9 +183,7 @@ elseif (ANDROID)
     install (FILES
             ${QtCore_location}
             ${QtGui_location}
-            ${QtWidgets_location}
             ${QtNetwork_location}
-            ${QtOpenGL_location}
             ${QtXml_location}
             ${QtQuick_location}
             ${QtQml_location}

@@ -17,10 +17,11 @@
  *
  */
 
-#include <QtWidgets>
+#include <QtGui>
 
 #include "mapconfig.h"
 
+#ifndef Q_OS_ANDROID
 const QGLFormat &
 MapConfig::glFormat() {
   static QGLFormat fmt(
@@ -32,6 +33,7 @@ MapConfig::glFormat() {
     );
   return fmt;
 }
+#endif
 
 const QString &
 MapConfig::emptyAirportIcon() {

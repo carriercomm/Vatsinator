@@ -26,7 +26,6 @@
 #include <QFile>
 #include <QUrl>
 
-class QProgressBar;
 class QNetworkReply;
 
 /*
@@ -52,10 +51,8 @@ signals:
 public:
   /**
    * Creates new FileDownloader instance.
-   * @param pb ProgressBar that will be updated during file fetching.
-   * @param parent
    */
-  FileDownloader(QProgressBar* = 0, QObject* = 0);
+  FileDownloader(QObject* = 0);
   
   /**
    * If the requests queue is empty, downloads the given file
@@ -73,21 +70,19 @@ public:
    * Returns true if there are any queries scheduled.
    */
   inline bool anyTasksLeft() const { return !__urls.isEmpty(); }
+
+private slots:
+  void __readyRead();
+  void __finished();
   
 private:
   void __startRequest();
   
   QQueue<QUrl>   __urls;
-  QProgressBar*  __pb;
   QFile          __output;
   
   QNetworkAccessManager __nam;
   QNetworkReply*        __reply;
-  
-private slots:
-  void __readyRead();
-  void __finished();
-  void __updateProgress(qint64, qint64);
   
 };
 
