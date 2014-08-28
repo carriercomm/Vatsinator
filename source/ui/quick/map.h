@@ -31,6 +31,9 @@ class QQuickWindow;
  */
 class Map : public QQuickItem {
   Q_OBJECT
+  
+signals:
+  void ready();
 
 public:
   Map();
@@ -38,15 +41,29 @@ public:
   
   Q_INVOKABLE void updateZoom(qreal);
   Q_INVOKABLE void updatePosition(int, int);
+  Q_INVOKABLE QString cachedImageSource() const;
   
   inline MapRenderer* renderer() { return __renderer; }
   
 public slots:
   void sync();
   void cleanup();
-  
+
 private slots:
-  void handleWindowChanged(QQuickWindow*);
+  /**
+   * Grabs the window and stores it in the cache.
+   */
+  void __cacheMapImage();
+  
+  /**
+   * Handles the window change.
+   */
+  void __handleWindowChanged(QQuickWindow*);
+  
+  /**
+   * 
+   */
+  void __handleApplicationStateChanged(Qt::ApplicationState);
   
 private:
   MapRenderer* __renderer;

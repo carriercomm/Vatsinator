@@ -19,6 +19,7 @@
 
 #include <QtQuick>
 
+#include "storage/filemanager.h"
 #include "ui/map/maprenderer.h"
 #include "vatsimdata/vatsimdatahandler.h"
 #include "vatsinatorapplication.h"
@@ -28,7 +29,9 @@
 Map::Map() :
     __renderer(nullptr) {
   setFlag(QQuickItem::ItemHasContents);
-  connect(this, SIGNAL(windowChanged(QQuickWindow*)), SLOT(handleWindowChanged(QQuickWindow*)));
+  connect(this, SIGNAL(windowChanged(QQuickWindow*)), SLOT(__handleWindowChanged(QQuickWindow*)));
+  connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
+          SLOT(__handleApplicationStateChanged(Qt::ApplicationState)), Qt::DirectConnection);
 }
 
 Map::~Map() {
@@ -64,12 +67,18 @@ Map::updatePosition(int _x, int _y) {
       window()->update();
 }
 
+QString
+Map::cachedImageSource() const {
+  return FileManager::cachePath() % "mapimage.png";
+}
+
 void
 Map::sync() {
   if (!__renderer) {
     __renderer = new MapRenderer();
     connect(window(),   SIGNAL(beforeRendering()),
             __renderer, SLOT(paint()),  Qt::DirectConnection);
+    emit ready();
   }
   
   __renderer->setViewport(window()->size() * window()->devicePixelRatio());
@@ -84,7 +93,22 @@ Map::cleanup() {
 }
 
 void
-Map::handleWindowChanged(QQuickWindow* _win) {
+Map::__cacheMapImage() {
+  if (!window()) {
+    qWarning("No window, can't cache the map image");
+    return;
+  }
+  
+  QImage image = window()->grabWindow();
+  
+  
+  bool result = image.save(cachedImageSource());
+  if (!result)
+    qWarning("Could not save the map image");
+}
+
+void
+Map::__handleWindowChanged(QQuickWindow* _win) {
   if (_win) {
     connect(_win,       SIGNAL(beforeSynchronizing()),
             this,       SLOT(sync()), Qt::DirectConnection);
@@ -94,5 +118,21 @@ Map::handleWindowChanged(QQuickWindow* _win) {
                         SIGNAL(vatsimDataUpdated()),
             _win,       SLOT(update()));
     _win->setClearBeforeRendering(false);
+  }
+}
+
+void
+Map::__handleApplicationStateChanged(Qt::ApplicationState _state) {
+  switch (_state) {
+    case Qt::ApplicationSuspended:
+    case Qt::ApplicationHidden:
+    case Qt::ApplicationInactive:
+      qDebug("Deactivating map...");
+      __cacheMapImage();
+      break;
+      
+    case Qt::ApplicationActive:
+      qDebug("Restoring map...");
+      break;
   }
 }

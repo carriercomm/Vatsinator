@@ -126,14 +126,36 @@ FileManager::localDataPath() {
         QStandardPaths::writableLocation(QStandardPaths::DataLocation)
       % QDir::separator()
       % "Vatsinator"
-    ) % QDir::separator();
+    ) % QDir::separator()
 #else
     QDir::cleanPath(
       QDesktopServices::storageLocation(QDesktopServices::DataLocation)
       % QDir::separator()
       % "Vatsinator"
-    ) % QDir::separator();
+    ) % QDir::separator()
 #endif
+    ;
     
   return LocalDataLocation;
+}
+
+QString
+FileManager::cachePath() {
+  static const QString CacheLocation = 
+  #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    QDir::cleanPath(
+        QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
+      % QDir::separator()
+      % "Vatsinator"
+    ) % QDir::separator()
+#else
+    QDir::cleanPath(
+      QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
+      % QDir::separator()
+      % "Vatsinator"
+    ) % QDir::separator()
+#endif
+    ;
+  
+  return CacheLocation;
 }

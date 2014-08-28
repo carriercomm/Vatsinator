@@ -90,6 +90,11 @@ public:
    */
   static QString localDataPath();
   
+  /**
+   * Returns path to where cache can be stored.
+   */
+  static QString cachePath();
+  
 };
 
 #endif // FILEMANAGER_H

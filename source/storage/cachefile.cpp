@@ -1,6 +1,6 @@
 /*
     cachefile.cpp
-    Copyright (C) 2012-2013  Michał Garapich michal@garapich.pl
+    Copyright (C) 2012-2014  Michał Garapich michal@garapich.pl
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,35 +18,21 @@
 
 #include <QtCore>
 
+#include "storage/filemanager.h"
 #include "vatsinatorapplication.h"
 
 #include "cachefile.h"
 
-static const QString CacheDirectory =
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    QDir::cleanPath(
-        QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    );
-#else
-    QDir::cleanPath(
-      QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    );
-#endif
-
 CacheFile::CacheFile(const QString& _fileName) :
-    QFile(CacheDirectory % QDir::separator() % _fileName) {
+    QFile(FileManager::cachePath() % _fileName) {
   qDebug("Cache file location: %s", qPrintable(fileName()));
 }
 
 bool
 CacheFile::exists() const {
-  if (!QDir(CacheDirectory).exists()) {
-    qDebug("CacheFile: creating directory %s...", qPrintable(CacheDirectory));
-    QDir().mkpath(CacheDirectory);
+  if (!QDir(FileManager::cachePath()).exists()) {
+    qDebug("CacheFile: creating directory %s...", qPrintable(FileManager::cachePath()));
+    QDir().mkpath(FileManager::cachePath());
     return false;
   }
   
@@ -55,8 +41,8 @@ CacheFile::exists() const {
 
 bool
 CacheFile::open(OpenMode _mode) {
-  if (!QDir(CacheDirectory).exists())
-    QDir().mkdir(CacheDirectory);
+  if (!QDir(FileManager::cachePath()).exists())
+    QDir().mkpath(FileManager::cachePath());
   
   bool wasOpened = QFile::open(_mode);
   if (!wasOpened)

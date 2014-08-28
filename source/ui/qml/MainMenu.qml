@@ -23,15 +23,17 @@ import QtGraphicalEffects 1.0
 Item {
   id: root
   
+  property int swipe: 0
+  
   width: parent.width
   height: parent.height
   x: width * -1
   
-  /* Semi-transparent background */
-  Rectangle {
-    anchors.fill: parent
-    color: "#262626"
-    opacity: 0.8
+  function toggleState() {
+    if (root.state == "shown")
+      root.state = "hidden";
+    else
+      root.state = "shown";
   }
   
   /* Menu container shadow */
@@ -62,56 +64,7 @@ Item {
     }
   }
   
-  /* Menu drawer */
-  Item {
-    id: drawerContainer
-    
-    height: drawer.height + (2 * drawerShadow.glowRadius)
-    width: 64 + drawer.anchors.leftMargin + (2 * drawerShadow.glowRadius)
-    anchors {
-      bottom: parent.bottom
-      bottomMargin: parent.height / 20
-      left: parent.right
-    }
-    
-    RectangularGlow {
-      id: drawerShadow
-      
-      anchors.fill: parent
-      glowRadius: 1.0
-      color: "#393939"
-      cornerRadius: 11
-      anchors.leftMargin: drawer.anchors.leftMargin
-    }
-    
-    Rectangle {
-      id: drawer
-      
-      color: "white"
-      border.width: 0
-      radius: 10
-      height: 128
-      width: 64
-      anchors.left: parent.left
-      anchors.verticalCenter: parent.verticalCenter
-      anchors.leftMargin: -10
-      
-      Image {
-        width: 48
-        height: 48
-        fillMode: Image.Stretch
-        source: "ic_drawer.png"
-        anchors.centerIn: parent
-      }
-    }
-    
-    MouseArea {
-      anchors.fill: parent
-      onClicked: root.state = "shown"
-    }
-  }
-  
-  MouseArea {
+  SwipeHandler {
     anchors {
       left: container.right
       right: root.right
@@ -119,12 +72,15 @@ Item {
       top: root.top
     }
     
-    onClicked: root.state = ""
+    onSwipeEnded: root.toggleState()
+    onSwipeContinues: root.swipe += diffX
   }
+  
+  onSwipeChanged: x = root.swipe - root.width
   
   Keys.onReleased: {
     if (event.key == Qt.Key_Back) {
-      root.state = ""
+      root.state = "hidden"
       event.accepted = true
     }
   }
@@ -132,15 +88,18 @@ Item {
   states: [
     State {
       name: "shown"
-      PropertyChanges { target: root; x: 0; focus: true }
-      PropertyChanges { target: drawerContainer; visible: false }
+      PropertyChanges { target: root; swipe: root.width; focus: true }
+    },
+    State {
+      name: "hidden"
+      PropertyChanges { target: root; swipe: 0; focus: false }
     }
   ]
   
   transitions: [
     Transition {
       to: "*"
-      PropertyAnimation { target: root; property: "x"; duration: 200; easing.type: Easing.OutQuad }
+      PropertyAnimation { target: root; property: "swipe"; duration: 200; easing.type: Easing.OutQuad }
     }
   ]
 }

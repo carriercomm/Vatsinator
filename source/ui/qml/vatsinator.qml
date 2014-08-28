@@ -19,6 +19,7 @@
 
 import QtQuick 2.2
 import QtQuick.Controls 1.2
+import QtGraphicalEffects 1.0
 import VatsinatorQML 1.0
 
 ApplicationWindow {
@@ -36,30 +37,40 @@ ApplicationWindow {
     id: map
   }
   
-  PinchArea {
+  /* Semi-transparent background */
+  Rectangle {
+    anchors.fill: parent
+    color: "#262626"
+    opacity: (mainMenu.swipe / parent.width) * 0.8
+  }
+  
+  Row {
     anchors.fill: parent
     
-    onPinchUpdated: {
-      map.updateZoom(pinch.scale - pinch.previousScale)
+    SwipeHandler {
+      width: parent.width / 20
+      height: parent.height
+      
+      onSwipeEnded: mainMenu.toggleState()
+      onSwipeContinues: mainMenu.swipe += diffX
     }
     
-    MouseArea {
-      anchors.fill: parent
+    MapControls {
+      width: (parent.width / 20) * 19
+      height: parent.height
       
-      property int lastX
-      property int lastY
-      
-      onPressed: {
-        lastX = mouse.x;
-        lastY = mouse.y;
-        mouse.accepted = true;
-      }
-      
-      onPositionChanged: {
-        map.updatePosition(mouse.x - lastX, mouse.y - lastY);
-        lastX = mouse.x;
-        lastY = mouse.y;
-      }
+      onZoomUpdated: map.updateZoom(zoom)
+      onPositionUpdated: map.updatePosition(x, y)
+    }
+  }
+  
+  MenuDrawer {
+    id: menuDrawer
+    
+    anchors {
+      left: parent.left
+      bottom: parent.bottom
+      bottomMargin: parent.height / 20
     }
   }
   
