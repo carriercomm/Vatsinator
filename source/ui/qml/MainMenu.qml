@@ -44,6 +44,23 @@ Item {
     cornerRadius: 0
   }
   
+  /* Menu list delegate */
+  Component {
+    id: menuListDelegate
+    Item {
+      width: menuList.width
+      height: 120 /* TODO DPI-independent value */
+      
+      Text {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 60 /* TODO DPI-independent value */
+        color: "#E5E5E5"
+        text: name
+      }
+    }
+  }
+  
   /* Menu container */
   Rectangle {
     id: container
@@ -53,14 +70,12 @@ Item {
     color: "#262626"
     
     ListView {
+      id: menuList
       anchors.fill: parent
       anchors.margins: 10
       
       model: MenuModel {}
-      delegate: Text {
-        color: "#E5E5E5"
-        text: name
-      }
+      delegate: menuListDelegate
     }
   }
   
