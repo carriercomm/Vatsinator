@@ -17,7 +17,7 @@
  *
  */
 
-#include <QtGlobal>
+#include <QtGui>
 
 #include "db/worldmap.h"
 #include "ui/map/maprenderer.h"

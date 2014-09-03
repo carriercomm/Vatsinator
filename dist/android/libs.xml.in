@@ -6,7 +6,6 @@
     
     <array name="bundled_libs">
         <item>quazip</item>
-        <item>qjson</item>
     </array>
 
     <array name="qt_libs">

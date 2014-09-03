@@ -26,11 +26,12 @@ endif (POLICY CMP0028)
 
 if (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
     set (LINUX 1)
-endif (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
+endif ()
 
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules)
 
 find_package (Qt5Core REQUIRED)
+find_package (Qt5Gui REQUIRED)
 find_package (Qt5Xml REQUIRED)
 find_package (Qt5Network REQUIRED)
 
@@ -50,6 +51,7 @@ else ()
 endif ()
 
 find_package (QuaZip REQUIRED)
+include_directories (${QUAZIP_INCLUDE_DIRS})
 
 get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
     
@@ -118,7 +120,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
 if (NOT APPLE)
     set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-endif (NOT APPLE)
+endif ()
 add_subdirectory (source)
 
 add_subdirectory (resources)
@@ -160,7 +162,6 @@ elseif (ANDROID)
     get_target_property(QtXml_location Qt5::Xml LOCATION)
     get_target_property(QtQuick_location Qt5::Quick LOCATION)
     get_target_property(QtQml_location Qt5::Qml LOCATION)
-    get_target_property(qjson_location qjson LOCATION)
 
     install (FILES
             ${QtCore_location}
@@ -170,7 +171,6 @@ elseif (ANDROID)
             ${QtQuick_location}
             ${QtQml_location}
             ${QUAZIP_LIBRARIES}
-            ${qjson_location}
             DESTINATION libs/${ANDROID_ABI}
         )
         
