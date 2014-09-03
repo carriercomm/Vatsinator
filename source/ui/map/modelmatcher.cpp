@@ -19,6 +19,7 @@
 #include <QtCore>
 #include <QOpenGLTexture>
 
+
 #include "ui/widgetsuserinterface.h"
 #include "vatsimdata/vatsimdatahandler.h"
 #include "storage/filemanager.h"

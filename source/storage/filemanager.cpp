@@ -24,7 +24,6 @@
 
 #include "storage/filemanager.h"
 
-
 FileManager::FileManager() {
   qDebug("FileManager: local data location: %s", qPrintable(localDataPath()));
   
@@ -121,20 +120,10 @@ FileManager::path(const QString& _f) {
 QString
 FileManager::localDataPath() {
   static const QString LocalDataLocation =
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     QDir::cleanPath(
-        QStandardPaths::writableLocation(QStandardPaths::DataLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    ) % QDir::separator()
-#else
-    QDir::cleanPath(
-      QDesktopServices::storageLocation(QDesktopServices::DataLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    ) % QDir::separator()
-#endif
-    ;
+        QStandardPaths::writableLocation(QStandardPaths::DataLocation) %
+        QDir::separator() % "Vatsinator")
+      % QDir::separator();
     
   return LocalDataLocation;
 }
@@ -142,20 +131,10 @@ FileManager::localDataPath() {
 QString
 FileManager::cachePath() {
   static const QString CacheLocation = 
-  #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
     QDir::cleanPath(
-        QStandardPaths::writableLocation(QStandardPaths::CacheLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    ) % QDir::separator()
-#else
-    QDir::cleanPath(
-      QDesktopServices::storageLocation(QDesktopServices::CacheLocation)
-      % QDir::separator()
-      % "Vatsinator"
-    ) % QDir::separator()
-#endif
-    ;
+        QStandardPaths::writableLocation(QStandardPaths::CacheLocation) %
+        QDir::separator() % "Vatsinator")
+      % QDir::separator();
   
   return CacheLocation;
 }

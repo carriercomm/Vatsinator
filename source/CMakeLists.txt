@@ -36,24 +36,12 @@ else (ANDROID)
   )
 endif (ANDROID)
 
-# fix for older versions of qjson library
-if (qjson_LIBRARIES)
-    set (QJSON_LIBRARIES ${qjson_LIBRARIES})
-endif (qjson_LIBRARIES)
-
-
-if (${QT_VERSION} VERSION_LESS 5.0)
-  set (vatsinator_QT_LIBS
-    ${QT_LIBRARIES}
-  )
-else (${QT_VERSION} VERSION_LESS 5.0)
-  set (vatsinator_QT_LIBS
+set (vatsinator_QT_LIBS
     Qt5::Widgets
     Qt5::Network
     Qt5::Xml
     Qt5::OpenGL
-  )
-endif (${QT_VERSION} VERSION_LESS 5.0)
+)
       
 if (LINUX)
     set (vatsinator_PREFIX "${CMAKE_INSTALL_PREFIX}/share/vatsinator/")
@@ -62,7 +50,6 @@ if (LINUX)
         ${vatsinator_QT_LIBS}
         ${OPENGL_LIBRARY}
         ${QUAZIP_LIBRARIES}
-        ${QJSON_LIBRARIES}
     )
 elseif (APPLE)
     set (vatsinator_PREFIX "")
@@ -71,7 +58,6 @@ elseif (APPLE)
         ${vatsinator_QT_LIBS}
         ${OPENGL_LIBRARY}
         ${QUAZIP_LIBRARIES}
-        ${QJSON_LIBRARIES}
     )
 elseif (WIN32)
     set (vatsinator_PREFIX "")
@@ -84,7 +70,6 @@ elseif (WIN32)
         ${QT_QTOPENGL_LIBRARY}
         ${QT_QTNETWORK_LIBRARY}
         ${QUAZIP_LIBRARIES}
-        ${QJSON_LIBRARIES}
   )
 elseif (ANDROID)
     set (vatsinator_PREFIX "")

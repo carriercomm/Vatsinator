@@ -30,52 +30,35 @@ endif (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
 
 set (CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules)
 
-option (FORCE_QT4 "Force building with Qt4 even if Qt5 is available" OFF)
-if (NOT FORCE_QT4)
-  find_package (Qt5Core QUIET)
-  if (Qt5Core_FOUND)
-    find_package (Qt5Gui REQUIRED)
-    find_package (Qt5Xml REQUIRED)
-    find_package (Qt5Network REQUIRED)
-    
-    include_directories(${Qt5Network_INCLUDE_DIRS})
-    include_directories(${Qt5Xml_INCLUDE_DIRS})
-    
-    if (ANDROID)
-      find_package (Qt5Quick REQUIRED)
-      include_directories(${Qt5Quick_INCLUDE_DIRS})
-    else (ANDROID)
-      find_package (Qt5Widgets REQUIRED)
-      find_package (Qt5OpenGL REQUIRED)
-      include_directories(${Qt5Widgets_INCLUDE_DIRS})
-      include_directories(${Qt5OpenGL_INCLUDE_DIRS})
-    endif (ANDROID)
-    
-    get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
-    
-    if (Qt5_POSITION_INDEPENDENT_CODE)
-      set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-    endif()
-  endif (Qt5Core_FOUND)
-endif (NOT FORCE_QT4)
+find_package (Qt5Core REQUIRED)
+find_package (Qt5Xml REQUIRED)
+find_package (Qt5Network REQUIRED)
 
-if (NOT Qt5Core_FOUND)
-  if (ANDROID)
-    message (FATAL_ERROR "Sorry, Android builds are supported only with Qt5.")
-  endif (ANDROID)
+include_directories(${Qt5Core_INCLUDE_DIRS})
+include_directories(${Qt5Network_INCLUDE_DIRS})
+include_directories(${Qt5Xml_INCLUDE_DIRS})
 
-  find_package (Qt4 4.8 COMPONENTS QtCore QtGui QtOpenGL QtXml QtNetwork REQUIRED)
-  include(${QT_USE_FILE})
-endif (NOT Qt5Core_FOUND)
+if (ANDROID)
+  find_package(Qt5Quick REQUIRED)
+  include_directories(${Qt5Quick_INCLUDE_DIRS})
+else ()
+  find_package (Qt5Widgets REQUIRED)  
+  find_package (Qt5OpenGL REQUIRED) # TODO Qt 5.4: remove (QtOpenGLWidget)
+  find_package (OpenGL REQUIRED)
+  include_directories(${Qt5Widgets_INCLUDE_DIRS})  
+  include_directories(${Qt5OpenGL_INCLUDE_DIRS})
+endif ()
+
+find_package (QuaZip REQUIRED)
+
+get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+    
+if (Qt5_POSITION_INDEPENDENT_CODE)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
 
 exec_program (${QT_QMAKE_EXECUTABLE} ARGS "-query QT_VERSION"
       OUTPUT_VARIABLE QT_VERSION)
-
-if (NOT ANDROID)
-  find_package (OpenGL REQUIRED)
-endif (NOT ANDROID)
-find_package (QuaZip REQUIRED)
-find_package (QJSON REQUIRED)
 
 # set CMAKE_BUILD_TYPE
 if (CMAKE_BUILD_TYPE MATCHES Debug)
@@ -131,7 +114,6 @@ endif (APPLE)
 
 include (VatsinatorInstall)
 
-include_directories(${QJSON_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 
 if (NOT APPLE)
