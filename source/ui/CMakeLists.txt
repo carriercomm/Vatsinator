@@ -79,7 +79,6 @@ set (widgets_SRCS
     pages/miscellaneouspage.cpp
     pages/networkpage.cpp
     pages/pluginlistwidgetitem.cpp
-    pages/viewpage.cpp
     
     views/airporttableview.cpp
     views/controllertableview.cpp
@@ -123,7 +122,6 @@ set (widgets_FORMS
     pages/mappage.ui
     pages/miscellaneouspage.ui
     pages/networkpage.ui
-    pages/viewpage.ui
 
     windows/aboutwindow.ui
     windows/airportdetailswindow.ui

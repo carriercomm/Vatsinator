@@ -71,21 +71,12 @@ FirItem::drawBackground() const {
 
 bool
 FirItem::isVisible() const {
-  if (position().isNull())
-    return false;
-  
-  if (data()->isEmpty())
-    return __scene->settings().view.unstaffed_firs;
-  else
-    return __scene->settings().view.staffed_firs;
+  return !position().isNull();
 }
 
 bool
 FirItem::isLabelVisible() const {
-  if (data()->isEmpty())
-    return __scene->settings().view.unstaffed_firs;
-  else
-    return __scene->settings().view.staffed_firs;
+  return !data()->isEmpty();
 }
 
 const LonLat &

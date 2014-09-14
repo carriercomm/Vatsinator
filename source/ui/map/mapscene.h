@@ -78,21 +78,6 @@ public:
       QColor unstaffed_fir_borders;
       QColor approach_circle;
     } colors;
-    
-    struct {
-      bool airports_layer;
-      bool airport_labels;
-      bool pilots_layer;
-      bool staffed_firs;
-      bool unstaffed_firs;
-      bool empty_airports;
-      
-      struct {
-        bool always;
-        bool airport_related;
-        bool when_hovered;
-      } pilot_labels;
-    } view;
   };
   
   explicit MapScene(QObject*);

@@ -58,7 +58,7 @@ FlightItem::isVisible() const {
 
 bool
 FlightItem::isLabelVisible() const {
-  return __scene->settings().view.pilot_labels.always;
+  return true;
 }
 
 const LonLat &

@@ -57,15 +57,12 @@ bool
 AirportItem::isVisible() const {
   Q_ASSERT(!__position.isNull());
   
-  if (data()->isEmpty())
-    return __scene->settings().view.empty_airports;
-  else
-    return __scene->settings().view.airports_layer;
+  return !data()->isEmpty();
 }
 
 bool
 AirportItem::isLabelVisible() const {
-  return __scene->settings().view.airport_labels;
+  return true;
 }
 
 const LonLat &

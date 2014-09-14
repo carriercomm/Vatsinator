@@ -160,14 +160,4 @@ SettingsManager::__fillDefaults() {
   __defaults["network.database_integration"] = true;
   __defaults["network.weather_forecast_provider"] = QString();
   __defaults["network.weather_temperature_units"] = "Celsius";
-  
-  __defaults["view.pilots_layer"] = true;
-  __defaults["view.airports_layer"] = true;
-  __defaults["view.staffed_firs"] = true;
-  __defaults["view.unstaffed_firs"] = true;
-  __defaults["view.empty_airports"] = false;
-  __defaults["view.pilot_labels.always"] = true;
-  __defaults["view.pilot_labels.when_hovered"] = true;
-  __defaults["view.pilot_labels.airport_related"] = true;
-  __defaults["view.airport_labels"] = true;
 }

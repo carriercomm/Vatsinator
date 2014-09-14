@@ -49,7 +49,8 @@ MapRenderer::MapRenderer(QObject* _parent) :
     __world(new WorldPolygon(this)),
     __iconKeeper(new IconKeeper(this)),
     __modelMatcher(new ModelMatcher(this)),
-    __scene(new MapScene(this)) {
+    __scene(new MapScene(this)),
+    __labelsOpacity(0.0) {
   
   __createShaderPrograms();
   __restoreSettings();
@@ -275,33 +276,29 @@ MapRenderer::__drawFirs() {
   __identityProgram->bind();
   __identityProgram->setUniformValue(__identityOffsetLocation, __xOffset);
   
-  if (__scene->settings().view.unstaffed_firs) {
-    mvp.translate(QVector3D(0.0f, 0.0f, unstaffedFirsZ));
-    __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
-    __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.unstaffed_fir_borders);
-    for (const FirItem* item: __scene->firItems()) {
-      if (item->data()->isEmpty())
-        item->drawBorders();
-    }
+  mvp.translate(QVector3D(0.0f, 0.0f, unstaffedFirsZ));
+  __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
+  __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.unstaffed_fir_borders);
+  for (const FirItem* item: __scene->firItems()) {
+    if (item->data()->isEmpty())
+      item->drawBorders();
   }
   
-  if (__scene->settings().view.staffed_firs) {
-    mvp.translate(QVector3D(0.0f, 0.0f, __scene->settings().view.unstaffed_firs ? staffedFirsZ - unstaffedFirsZ : staffedFirsZ));
-    __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
-    __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_fir_borders);
-    
-    glLineWidth(3.0);
-    for (const FirItem* item: __scene->firItems()) {
-      if (item->data()->isStaffed())
-        item->drawBorders();
-    }
-    glLineWidth(1.0);
-    
-    __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_fir_background);
-    for (const FirItem* item: __scene->firItems()) {
-      if (item->data()->isStaffed())
-        item->drawBackground();
-    }
+  mvp.translate(QVector3D(0.0f, 0.0f, staffedFirsZ - unstaffedFirsZ));
+  __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
+  __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_fir_borders);
+  
+  glLineWidth(3.0);
+  for (const FirItem* item: __scene->firItems()) {
+    if (item->data()->isStaffed())
+      item->drawBorders();
+  }
+  glLineWidth(1.0);
+  
+  __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_fir_background);
+  for (const FirItem* item: __scene->firItems()) {
+    if (item->data()->isStaffed())
+      item->drawBackground();
   }
   
   __identityProgram->release();
@@ -311,38 +308,36 @@ void
 MapRenderer::__drawUirs() {
   static constexpr GLfloat staffedUirsZ = static_cast<GLfloat>(MapConfig::MapLayers::StaffedUirs);
   
-  if (__scene->settings().view.staffed_firs) {
-    __identityProgram->bind();
-    __identityProgram->setUniformValue(__identityOffsetLocation, __xOffset);
-    QMatrix4x4 mvp = __projection * __worldTransform;
-    mvp.translate(QVector3D(0.0f, 0.0f, staffedUirsZ));
-    
-    __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
-    __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_uir_borders);
-    
-    glLineWidth(3.0);
-    for (const UirItem* item: __scene->uirItems()) {
-      if (item->isVisible()) {
-        for (const FirItem* f: item->firItems()) {
-          if (f->data()->isEmpty())
-            f->drawBorders();
-        }
+  __identityProgram->bind();
+  __identityProgram->setUniformValue(__identityOffsetLocation, __xOffset);
+  QMatrix4x4 mvp = __projection * __worldTransform;
+  mvp.translate(QVector3D(0.0f, 0.0f, staffedUirsZ));
+  
+  __identityProgram->setUniformValue(__identityMatrixLocation, mvp);
+  __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_uir_borders);
+  
+  glLineWidth(3.0);
+  for (const UirItem* item: __scene->uirItems()) {
+    if (item->isVisible()) {
+      for (const FirItem* f: item->firItems()) {
+        if (f->data()->isEmpty())
+          f->drawBorders();
       }
     }
-    
-    glLineWidth(1.0);
-    
-    __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_uir_background);
-    for (const UirItem* item: __scene->uirItems()) {
-      if (item->isVisible()) {
-        for (const FirItem* f: item->firItems()) {
-          if (f->data()->isEmpty())
-            f->drawBackground();
-        }
-      }
-    }
-    __identityProgram->release();
   }
+  
+  glLineWidth(1.0);
+  
+  __identityProgram->setUniformValue(__identityColorLocation, __scene->settings().colors.staffed_uir_background);
+  for (const UirItem* item: __scene->uirItems()) {
+    if (item->isVisible()) {
+      for (const FirItem* f: item->firItems()) {
+        if (f->data()->isEmpty())
+          f->drawBackground();
+      }
+    }
+  }
+  __identityProgram->release();
 }
 
 void

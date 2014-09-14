@@ -25,7 +25,6 @@
 #include "ui/userinterface.h"
 #include "ui/pages/miscellaneouspage.h"
 #include "ui/pages/networkpage.h"
-#include "ui/pages/viewpage.h"
 #include "ui/pages/mappage.h"
 #include "vatsinatorapplication.h"
 
@@ -42,11 +41,6 @@ SettingsWindow::SettingsWindow(QWidget* _parent) :
   }
   {
     NetworkPage* p = new NetworkPage();
-    __addPage(p->listElement(), p->listIcon(), p);
-    vApp()->settingsManager()->addPage(p);
-  }
-  {
-    ViewPage* p = new ViewPage();
     __addPage(p->listElement(), p->listIcon(), p);
     vApp()->settingsManager()->addPage(p);
   }

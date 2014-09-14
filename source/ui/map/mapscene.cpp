@@ -272,14 +272,4 @@ MapScene::__updateSettings() {
   __settings.colors.staffed_uir_background = SM::get("map.staffed_uir_background_color").value<QColor>();
   __settings.colors.unstaffed_fir_borders = SM::get("map.unstaffed_fir_borders_color").value<QColor>();
   __settings.colors.approach_circle = SM::get("map.approach_circle_color").value<QColor>();
-  
-  __settings.view.airports_layer = SM::get("view.airports_layer").toBool();
-  __settings.view.airport_labels = SM::get("view.airport_labels").toBool();
-  __settings.view.pilots_layer = SM::get("view.pilots_layer").toBool();
-  __settings.view.staffed_firs = SM::get("view.staffed_firs").toBool();
-  __settings.view.unstaffed_firs = SM::get("view.unstaffed_firs").toBool();
-  __settings.view.empty_airports = SM::get("view.empty_airports").toBool();
-  __settings.view.pilot_labels.always = SM::get("view.pilot_labels.always").toBool();
-  __settings.view.pilot_labels.airport_related = SM::get("view.pilot_labels.airport_related").toBool();
-  __settings.view.pilot_labels.when_hovered = SM::get("view.pilot_labels.when_hovered").toBool();
 }

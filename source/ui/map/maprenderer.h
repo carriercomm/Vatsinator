@@ -52,6 +52,11 @@ class MapRenderer : public QObject {
    */
   Q_PROPERTY(LonLat center READ center WRITE setCenter)
   
+  /**
+   * Labels opacity - updated automatically according to _zoom_ property.
+   */
+  Q_PROPERTY(qreal labelsOpacity READ labelsOpacity)
+  
 signals:
   
   /**
@@ -127,6 +132,7 @@ public:
   
   inline int zoom() const { return __zoom; }
   inline const LonLat& center() const { return __center; }
+  inline qreal labelsOpacity() const { return __labelsOpacity; }
   
   inline int programColorLocation() const { return __identityColorLocation; }
   inline int programZLocation() const { return __texturedZLocation; }
@@ -179,6 +185,9 @@ private:
   
   /* The center of the map */
   LonLat __center;
+  
+  /* Labels opacity */
+  qreal __labelsOpacity;
   
   /* OpenGL functions */
   QOpenGLFunctions* __functions;
