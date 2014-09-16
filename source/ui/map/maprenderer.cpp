@@ -387,7 +387,7 @@ MapRenderer::__restoreSettings() {
   settings.beginGroup("CameraSettings");
   
   __actualZoom = settings.value("actualZoomCoefficient", 0).toInt();
-  __zoom = settings.value("zoom", 1).toInt();
+  __zoom = settings.value("zoom", MapConfig::zoomDefault()).toReal();
   __center = settings.value("center", QVariant::fromValue<LonLat>(LonLat(0.0, 0.0))).value<LonLat>();
   
   settings.endGroup();

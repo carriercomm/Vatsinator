@@ -2,11 +2,11 @@
   <qresource prefix="qmls">
     <file>AboutDialog.qml</file>
     <file>ic_drawer.png</file>
+    <file>main.qml</file>
     <file>MainMenu.qml</file>
     <file>MapControls.qml</file>
     <file>MenuDrawer.qml</file>
     <file>MenuModel.qml</file>
     <file>SwipeHandler.qml</file>
-    <file>vatsinator.qml</file>
   </qresource>
 </RCC>

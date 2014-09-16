@@ -32,9 +32,9 @@ QuickUserInterface::~QuickUserInterface() {
 
 void
 QuickUserInterface::initialize() {
-  qmlRegisterType<Map>("VatsinatorQML", 1, 0, "Map");
+  qmlRegisterType<Map>("org.eu.vatsinator.ui", 1, 0, "Map");
   
-  __engine.load(QUrl("qrc:///qmls/vatsinator.qml"));
+  __engine.load(QUrl("qrc:///qmls/main.qml"));
   
   emit initialized();
 }

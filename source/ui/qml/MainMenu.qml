@@ -39,7 +39,7 @@ Item {
   /* Menu container shadow */
   RectangularGlow {
     anchors.fill: container
-    glowRadius: 30.0
+    glowRadius: 15.0
     color: "#262626"
     cornerRadius: 0
   }
@@ -47,9 +47,11 @@ Item {
   /* Menu list delegate */
   Component {
     id: menuListDelegate
-    Item {
+    Rectangle {
       width: menuList.width
       height: 120 /* TODO DPI-independent value */
+      
+      color: mouse.pressed ? "#3E3E3E" : container.color
       
       Text {
         anchors.verticalCenter: parent.verticalCenter
@@ -57,6 +59,16 @@ Item {
         anchors.leftMargin: 60 /* TODO DPI-independent value */
         color: "#E5E5E5"
         text: name
+      }
+      
+      MouseArea {
+        id: mouse
+        
+        anchors.fill: parent
+        onClicked: {
+          /* TODO handle clicked */
+          console.log(name + " clicked")
+        }
       }
     }
   }

@@ -107,7 +107,7 @@ FileDownloader::__finished() {
     QFile::remove(__output.fileName());
   } else {
     emit finished(QString(__output.fileName()));
-    qCritical("FileDownloader: file %s downloaded, size: %lli",
+    qDebug("FileDownloader: file %s downloaded, size: %lli",
               qPrintable(__output.fileName()), size);
   }
   

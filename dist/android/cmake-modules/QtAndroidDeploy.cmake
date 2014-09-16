@@ -96,7 +96,7 @@ endfunction (install_android_qt_qmls)
 #       install_android_qt_jars(<jars>)
 #
 # Install selected jar files to the apk bundle. Each jar file must be specified
-# relative to 
+# relative to ${QT_INSTALL_PREFIX}/jar directory.
 #
 function (install_android_qt_jars)
   foreach (JAR ${ARGV})

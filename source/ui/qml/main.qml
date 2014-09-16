@@ -1,5 +1,5 @@
 /*
- * vatsinator.qml
+ * main.qml
  * Copyright (C) 2014  Michał Garapich <michal@garapich.pl>
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import VatsinatorQML 1.0
+import org.eu.vatsinator.ui 1.0
 
 ApplicationWindow {
   id: vatsinatorWindow

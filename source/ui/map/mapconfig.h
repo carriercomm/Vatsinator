@@ -71,7 +71,15 @@ public:
   }
   
   static constexpr qreal zoomBase() {
-    return 1.1;
+    return 1.001;
+  }
+  
+  static constexpr qreal zoomDefault() {
+#ifdef Q_OS_ANDROID
+    return 3.0;
+#else
+    return 1.0;
+#endif
   }
   
 #ifndef Q_OS_ANDROID
