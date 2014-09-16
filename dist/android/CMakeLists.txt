@@ -111,8 +111,10 @@ add_custom_target (android_resources
 
 if (${CMAKE_BUILD_TYPE} MATCHES Debug)
   set (ANT_ARGS "debug")
-elseif (${CMAKE_BUILD_TYPE} MATCHES Release)
-  set (ANT_ARGS "release")
+  set (ANDROID_APK_FILE_NAME vatsinator-debug.apk)
+elseif (${CMAKE_BUILD_TYPE} MATCHES Release) # TODO support app signing
+  set (ANT_ARGS "debug")
+  set (ANDROID_APK_FILE_NAME vatsinator-debug.apk)
 endif (${CMAKE_BUILD_TYPE} MATCHES Debug)
 
 add_custom_target (build_apk
@@ -123,7 +125,7 @@ add_custom_target (build_apk
 add_custom_target (deploy_apk
   DEPENDS build_apk
   COMMAND ${ADB_BIN} uninstall ${ANDROID_PACKAGE_NAME}
-  COMMAND ${ADB_BIN} install -r ${CMAKE_CURRENT_BINARY_DIR}/bin/vatsinator-debug.apk # TODO apk name for release
+  COMMAND ${ADB_BIN} install -r ${CMAKE_CURRENT_BINARY_DIR}/bin/${ANDROID_APK_FILE_NAME}
 )
 
 add_custom_target (run_apk

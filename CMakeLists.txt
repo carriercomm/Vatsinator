@@ -24,6 +24,11 @@ if (POLICY CMP0028)
   cmake_policy (SET CMP0028 NEW)
 endif (POLICY CMP0028)
 
+# Disallow use of the LOCATION target property.
+if (POLICY CMP0026)
+  cmake_policy (SET CMP0026 OLD)
+endif (POLICY CMP0026)
+
 if (UNIX AND NOT APPLE AND NOT MINGW AND NOT ANDROID)
     set (LINUX 1)
 endif ()
@@ -173,7 +178,6 @@ elseif (ANDROID)
             ${QUAZIP_LIBRARIES}
             DESTINATION libs/${ANDROID_ABI}
         )
-        
     
 endif (LINUX)
 
@@ -194,7 +198,7 @@ elseif (APPLE)
 elseif (WIN32)
     message (STATUS " * platform: Win32")
 elseif (ANDROID)
-    message (STATUS " * platform: Android (${ANDROID_ABI})")
+    message (STATUS " * platform: Android ${ANDROID_ABI}")
 else (LINUX)
     message (STATUS " * platform: Undefined")
 endif (LINUX)
