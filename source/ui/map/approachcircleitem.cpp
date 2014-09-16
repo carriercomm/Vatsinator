@@ -40,7 +40,7 @@ namespace {
     
     circle << qCos(0.0) * 0.005 << qSin(0.0) * 0.005;
     
-    return std::move(circle);
+    return qMove(circle);
   }
   
 }

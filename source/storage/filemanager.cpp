@@ -74,25 +74,24 @@ FileManager::staticPath(FileManager::StaticDir _d) {
   switch (_d) {
     case Plugins:
 #if defined Q_OS_ANDROID
-      return "assets:/plugins";
-#elif defined Q_OS_DARWIN
-      return QCoreApplication::applicationDirPath() % "../Resources/plugins";
+      return QStringLiteral("assets:/plugins");
+#elif defined Q_OS_MAC
+      return QCoreApplication::applicationDirPath() % QStringLiteral("../Resources/plugins");
 #else
-      return QString(VATSINATOR_PREFIX) % "plugins";
+      return QStringLiteral(VATSINATOR_PREFIX) % QStringLiteral("plugins");
 #endif
       
     case Translations:
 #if defined Q_OS_ANDROID
-      return "assets:/translations";
+      return QStringLiteral("assets:/translations");
 #elif defined Q_OS_DARWIN
-      return QCoreApplication::applicationDirPath() % "/../Resources/translations";
+      return QCoreApplication::applicationDirPath() % QStringLiteral("/../Resources/translations");
 #else
-      return QString(VATSINATOR_PREFIX) % "translations";
+      return QStringLiteral(VATSINATOR_PREFIX) % QStringLiteral("translations");
 #endif
     
     default:
-      Q_ASSERT_X(false, "getting static path", "No such file!");
-      return QString();
+      Q_UNREACHABLE();
   }
 }
 
@@ -107,13 +106,12 @@ FileManager::path(const QString& _f) {
   } else {
     return
 #if defined Q_OS_ANDROID
-      "assets:/"
+      QStringLiteral("assets:/") % _f;
 #elif defined Q_OS_DARWIN // on MacOS look for the file in the bundle
-      QCoreApplication::applicationDirPath() % "/../Resources/"
+      QCoreApplication::applicationDirPath() % QStringLiteral("/../Resources/") % _f;
 #else 
-      static_cast<QString>(VATSINATOR_PREFIX)
+      QStringLiteral(VATSINATOR_PREFIX) % _f;
 #endif
-      % _f;
   }
 }
 

@@ -50,6 +50,7 @@ MapRenderer::MapRenderer(QObject* _parent) :
     __modelMatcher(new ModelMatcher(this)),
     __scene(new MapScene(this)) {
   
+  Q_ASSERT(QOpenGLShaderProgram::hasOpenGLShaderPrograms());
   __createShaderPrograms();
   __restoreSettings();
   
@@ -127,8 +128,7 @@ MapRenderer::glFromLonLat(const LonLat& _point) {
 }
 
 void
-
-MapRenderer::drawFocused(const MapItem* _item) {
+MapRenderer::drawLines(const MapItem* _item) {
   static constexpr GLfloat linesZ = static_cast<GLfloat>(MapConfig::MapLayers::Lines);
   
   QMatrix4x4 mvp = __projection * __worldTransform;
@@ -395,42 +395,57 @@ MapRenderer::__restoreSettings() {
 
 void
 MapRenderer::__createShaderPrograms() {
+  bool result;
   /* Create identity shader */
   __identityProgram = new QOpenGLShaderProgram(this);
   QOpenGLShader* vertex = new QOpenGLShader(QOpenGLShader::Vertex, __identityProgram);
-  vertex->compileSourceFile(":/shaders/identity.vert");
+  result = vertex->compileSourceFile(":/shaders/identity.vert");
+  Q_ASSERT(result);
   QOpenGLShader* fragment = new QOpenGLShader(QOpenGLShader::Fragment, __identityProgram);
-  fragment->compileSourceFile(":/shaders/identity.frag");
+  result = fragment->compileSourceFile(":/shaders/identity.frag");
+  Q_ASSERT(result);
   __identityProgram->addShader(vertex);
   __identityProgram->addShader(fragment);
   
   __identityProgram->bindAttributeLocation("vertex", vertexLocation());
   
-  __identityProgram->link();
+  result = __identityProgram->link();
+  Q_ASSERT(result);
   __identityProgram->bind();
   __identityMatrixLocation = __identityProgram->uniformLocation("matrix");
+  Q_ASSERT(__identityMatrixLocation >= 0);
   __identityColorLocation = __identityProgram->uniformLocation("color");
+  Q_ASSERT(__identityColorLocation >= 0);
   __identityOffsetLocation = __identityProgram->uniformLocation("offset");
+  Q_ASSERT(__identityOffsetLocation >= 0);
   __identityProgram->release();
   
   /* Create textured shader */
   __texturedProgram = new QOpenGLShaderProgram(this);
   vertex = new QOpenGLShader(QOpenGLShader::Vertex, __texturedProgram);
-  vertex->compileSourceFile(":/shaders/textured.vert");
+  result = vertex->compileSourceFile(":/shaders/textured.vert");
+  Q_ASSERT(result);
   fragment = new QOpenGLShader(QOpenGLShader::Fragment, __texturedProgram);
-  fragment->compileSourceFile(":/shaders/textured.frag");
+  result = fragment->compileSourceFile(":/shaders/textured.frag");
+  Q_ASSERT(result);
   __texturedProgram->addShader(vertex);
   __texturedProgram->addShader(fragment);
   
   __texturedProgram->bindAttributeLocation("vertex", vertexLocation());
   __texturedProgram->bindAttributeLocation("texcoord", texcoordLocation());
   
-  __texturedProgram->link();
+  result = __texturedProgram->link();
+  Q_ASSERT(result);
+  
   __texturedProgram->bind();
   __texturedMatrixLocation = __texturedProgram->uniformLocation("matrix");
+  Q_ASSERT(__texturedMatrixLocation >= 0);
   __texturedPositionLocation = __texturedProgram->uniformLocation("position");
+  Q_ASSERT(__texturedPositionLocation >= 0);
   __texturedRotationLocation = __texturedProgram->uniformLocation("rotation");
+  Q_ASSERT(__texturedRotationLocation >= 0);
   __texturedZLocation = __texturedProgram->uniformLocation("z");
+  Q_ASSERT(__texturedZLocation >= 0);
   __texturedProgram->setUniformValue("texture", 0);
   __texturedProgram->release();
 }

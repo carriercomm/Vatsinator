@@ -28,7 +28,6 @@
 #include "network/statspurveyor.h"
 #include "storage/cachefile.h"
 #include "storage/languagemanager.h"
-#include "storage/pluginmanager.h"
 #include "storage/settingsmanager.h"
 #include "ui/vatsinatorstyle.h"
 #include "vatsimdata/vatsimdatahandler.h"
@@ -54,7 +53,6 @@ VatsinatorApplication::VatsinatorApplication(int& _argc, char** _argv) :
     __userInterface(new VATSINATOR_UI_IMPLEMENTATION()),
     __fileManager(new FileManager()),
     __settingsManager(new SettingsManager()),
-    __pluginManager(new PluginManager(this)),
     __airlineDatabase(new AirlineDatabase()),
     __airportDatabaase(new AirportDatabase()),
     __firDatabase(new FirDatabase()),
@@ -84,7 +82,7 @@ VatsinatorApplication::VatsinatorApplication(int& _argc, char** _argv) :
   setStyle(new VatsinatorStyle());
 #endif
   
-  connect(this, SIGNAL(initializing()), SLOT(__initialize()));
+  connect(this, &VatsinatorApplication::initializing, &VatsinatorApplication::__initialize);
   emit initializing();
 }
 
@@ -113,12 +111,6 @@ VatsinatorApplication::~VatsinatorApplication() {
   spThread->wait();
 }
 
-UserInterface*
-VatsinatorApplication::userInterface() {
-  Q_ASSERT(__userInterface);
-  return __userInterface;
-}
-
 void
 VatsinatorApplication::terminate() {
   std::terminate();
@@ -138,9 +130,6 @@ VatsinatorApplication::__initialize() {
   /* Read world map before UI */
   __worldMap->init();
   
-  /* Load plugins */
-  __pluginManager->loadPlugins();
-  
   /* Create windows */
   __userInterface->initialize();
   
@@ -155,12 +144,12 @@ VatsinatorApplication::__initialize() {
   spThread->start();
  
   /* Initialize everything else */
-  __airlineDatabase->init();
-  __airportDatabaase->init();
-  __firDatabase->init();
+  __airlineDatabase->initialize();
+  __airportDatabaase->initialize();
+  __firDatabase->initialize();
   
   /* Read data files only after databases are ready */
-  __vatsimData->init();
+  __vatsimData->initialize();
 }
 
 QMutex VatsinatorApplication::__mutex(QMutex::Recursive);

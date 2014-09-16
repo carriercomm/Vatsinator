@@ -28,7 +28,6 @@
 #include "modules/modulemanager.h"
 #include "ui/widgetsuserinterface.h"
 #include "storage/cachefile.h"
-#include "storage/pluginmanager.h"
 #include "storage/settingsmanager.h"
 #include "vatsimdata/airport.h"
 #include "vatsimdata/fir.h"
@@ -49,15 +48,13 @@
 
 #include "vatsimdatahandler.h"
 
-using std::for_each;
-
-static const QString CacheFileName = "lastdata";
+static const QString CacheFileName = QStringLiteral("lastdata");
 
 FlightTableModel* VatsimDataHandler::emptyFlightTable = new FlightTableModel();
 ControllerTableModel* VatsimDataHandler::emptyControllerTable = new ControllerTableModel();
 
 namespace {
-QMap<QString, QString> countries; // used by __readCountryFile() and __readFirFile()
+  QMap<QString, QString> countries; // used by __readCountryFile() and __readFirFile()
 }
 
 
@@ -82,8 +79,6 @@ VatsimDataHandler::VatsimDataHandler(QObject* _parent) :
           this,                                 SLOT(__handleFetchError()));
   connect(__scheduler,                          SIGNAL(timeToUpdate()),
           this,                                 SLOT(requestDataUpdate()));
-  connect(this,                                 SIGNAL(localDataBad(QString)),
-          vApp()->userInterface(),              SLOT(warning(QString)));
   connect(this,                                 SIGNAL(vatsimStatusError()),
           vApp()->userInterface(),              SLOT(statusError()));
   connect(this,                                 SIGNAL(vatsimDataError()),
@@ -97,7 +92,7 @@ VatsimDataHandler::VatsimDataHandler(QObject* _parent) :
 }
 
 VatsimDataHandler::~VatsimDataHandler() {
-  __clearData();
+  qDeleteAll(__clients);
   qDeleteAll(__airports);
   qDeleteAll(__firs);
   
@@ -108,8 +103,8 @@ VatsimDataHandler::~VatsimDataHandler() {
 }
 
 void
-VatsimDataHandler::init() {
-  __initData();
+VatsimDataHandler::initialize() {
+  __initializeData();
   
   __readCountryFile(FileManager::path("data/country"));
   __readAliasFile(FileManager::path("data/alias"));
@@ -329,7 +324,7 @@ VatsimDataHandler::findAirport(const QString& _icao) {
 
 QList<Airport*>
 VatsimDataHandler::airports() const {
-  return std::move(__airports.values());
+  return qMove(__airports.values());
 }
 
 Fir*
@@ -379,12 +374,12 @@ VatsimDataHandler::alternameName(const QString& _icao) {
 
 QList<Fir*>
 VatsimDataHandler::firs() const {
-  return std::move(__firs.values());
+  return qMove(__firs.values());
 }
 
 QList<Uir*>
 VatsimDataHandler::uirs() const {
-  return std::move(__uirs.values());
+  return qMove(__uirs.values());
 }
 
 int
@@ -489,7 +484,7 @@ VatsimDataHandler::__readAliasFile(const QString& _fName) {
   QFile file(_fName);
   
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    notifyWarning(tr("File %1 could not be opened! Please reinstall the application.").arg(file.fileName()));
+    notifyWarning(tr("File %1 could not be opened. Please reinstall the application.").arg(file.fileName()));
     return;
   }
   
@@ -499,7 +494,7 @@ VatsimDataHandler::__readAliasFile(const QString& _fName) {
    if (error.error != QJsonParseError::NoError) {
     qWarning("VatsimDataHandler: the following error occured parsing %s: %s",
              qPrintable(file.fileName()), qPrintable(error.errorString()));
-    notifyWarning(tr("File %1 could not be read. Please reinstall the applicaion.").arg(file.fileName()));
+    notifyWarning(tr("File %1 could not be read. Please reinstall the application.").arg(file.fileName()));
     return;
   }
   
@@ -538,7 +533,7 @@ VatsimDataHandler::__readCountryFile(const QString& _fName) {
   QFile file(_fName);
   
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    notifyWarning(tr("File %1 could not be opened! Please reinstall the application.").arg(_fName));
+    notifyWarning(tr("File %1 could not be opened. Please reinstall the application.").arg(_fName));
     return;
   }
   
@@ -548,7 +543,7 @@ VatsimDataHandler::__readCountryFile(const QString& _fName) {
    if (error.error != QJsonParseError::NoError) {
     qWarning("VatsimDataHandler: the following error occured parsing %s: %s",
              qPrintable(file.fileName()), qPrintable(error.errorString()));
-    notifyWarning(tr("File %1 could not be read. Please reinstall the applicaion.").arg(file.fileName()));
+    notifyWarning(tr("File %1 could not be read. Please reinstall the application.").arg(file.fileName()));
     return;
   }
   
@@ -573,7 +568,7 @@ VatsimDataHandler::__readFirFile(const QString& _fName) {
   QFile file(_fName);
   
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    notifyWarning(tr("File %1 could not be opened! Please reinstall the application.").arg(_fName));
+    notifyWarning(tr("File %1 could not be opened. Please reinstall the application.").arg(_fName));
     return;
   }
   
@@ -583,7 +578,7 @@ VatsimDataHandler::__readFirFile(const QString& _fName) {
   if (error.error != QJsonParseError::NoError) {
     qWarning("VatsimDataHandler: the following error occured parsing %s: %s",
              qPrintable(file.fileName()), qPrintable(error.errorString()));
-    notifyWarning(tr("File %1 could not be read. Please reinstall the applicaion.").arg(file.fileName()));
+    notifyWarning(tr("File %1 could not be read. Please reinstall the application.").arg(file.fileName()));
     return;
   }
   
@@ -632,7 +627,7 @@ VatsimDataHandler::__readUirFile(const QString& _fileName) {
   QFile file(_fileName);
   
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-    emit localDataBad(tr("File %1 could not be opened!").arg(_fileName));
+    notifyWarning(tr("File %1 could not be opened. Please reinstall the application.").arg(_fileName));
     return;
   }
   
@@ -665,8 +660,8 @@ VatsimDataHandler::__readUirFile(const QString& _fileName) {
 }
 
 void
-VatsimDataHandler::__initData() {
-  for_each(FirDatabase::getSingleton().firs().begin(),
+VatsimDataHandler::__initializeData() {
+  std::for_each(FirDatabase::getSingleton().firs().begin(),
     FirDatabase::getSingleton().firs().end(),
     [this](const FirRecord& fr) {
       Fir* f = new Fir(&fr);
@@ -674,20 +669,13 @@ VatsimDataHandler::__initData() {
     }
   );
   
-  for_each(AirportDatabase::getSingleton().airports().begin(),
+  std::for_each(AirportDatabase::getSingleton().airports().begin(),
     AirportDatabase::getSingleton().airports().end(),
     [this](const AirportRecord& ar) {
       Airport* a = new Airport(&ar);
       __airports.insert(a->icao(), a);
     }
   );
-}
-
-void
-VatsimDataHandler::__clearData() {
-  qDeleteAll(__clients);
-
-  __observers = 0;
 }
 
 void
@@ -729,7 +717,6 @@ VatsimDataHandler::__cleanupClients() {
 
 void
 VatsimDataHandler::__slotUiCreated() {
-  
   if (SM::get("network.cache_enabled").toBool() == true)
     __loadCachedData();
 
@@ -773,7 +760,7 @@ VatsimDataHandler::__handleFetchError() {
   if (__statusFileFetched) {
     emit vatsimDataError();
   } else {
-    if (__statusUrl != QString(NetConfig::Vatsim::backupStatusUrl())) {
+    if (__statusUrl != NetConfig::Vatsim::backupStatusUrl()) {
       /* Try the backup url */
       __statusUrl = NetConfig::Vatsim::backupStatusUrl();
       __beginDownload();
@@ -789,17 +776,22 @@ VatsimDataHandler::__reloadWeatherForecast() {
   QString desired = SM::get("network.weather_forecast_provider").toString();
   /* TODO Plugin selection needs to be done better  */
   if (desired != "none") {
-    if (!__weatherForecast || desired != __weatherForecast->providerName()) {
-      QList<WeatherForecastInterface*> weatherPlugins =
-          vApp()->plugins()->plugins<WeatherForecastInterface>();
-      for (WeatherForecastInterface* w: weatherPlugins) {
-        if (w->providerName() == desired) {
-          __weatherForecast = w;
+    QDir pluginsDir(FileManager::staticPath(FileManager::Plugins));
+    for (QString fileName: pluginsDir.entryList(QDir::Files)) {
+      QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+      QJsonObject pluginData = loader.metaData();
+      if (pluginData["IID"].toString() == "org.eu.vatsinator.Vatsinator.WeatherForecastInterface") {
+        QJsonObject metaData = pluginData["MetaData"].toObject();
+        QString name = metaData["name"].toString();
+        
+        if (desired == name) {
+          __weatherForecast = qobject_cast<WeatherForecastInterface*>(loader.instance());
+          Q_ASSERT(__weatherForecast);
+          qDebug("Loaded weather forecast plugin: %s",
+                 qPrintable(metaData["provider_name"].toString()));
           break;
         }
       }
-      Q_ASSERT(__weatherForecast->providerName() == desired);
-      qDebug("Loaded weather forecast plugin: %s", qPrintable(__weatherForecast->providerName()));
     }
   } else {
     __weatherForecast = nullptr;

@@ -71,6 +71,7 @@ protected:
   void mousePressEvent(QMouseEvent*) override;
   void mouseReleaseEvent(QMouseEvent*) override;
   void mouseMoveEvent(QMouseEvent*) override;
+  void keyPressEvent(QKeyEvent*) override;
   
 private:
   
@@ -82,7 +83,7 @@ private:
   /**
    * Gets item under the given point. nullptr if nothing.
    */
-  const MapItem* __underMouse(const QPoint&);
+  const MapItem* __underPoint(const QPoint&);
   
   /**
    * Updates the zoom factor.
