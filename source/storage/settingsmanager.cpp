@@ -51,23 +51,22 @@ SettingsManager::earlyGetLocale() {
 
 const QVariant &
 SettingsManager::get(const QString& _s) {
-//   Q_ASSERT_X(vApp()->settingsManager()->__settings.contains(_s),
-//              qPrintable(QString("SettingsManager::get(%1)").arg(_s)),
-//              "No such value");
+  Q_ASSERT_X(vApp()->settingsManager()->__settings.contains(_s),
+             qPrintable(QString("SettingsManager::get(%1)").arg(_s)),
+             "No such value");
   
   return vApp()->settingsManager()->__settings[_s];
 }
 
 void
 SettingsManager::updateUi(const QString& _pName) {
-  Q_ASSERT_X(vApp()->settingsManager()->__getPage(_pName),
-             qPrintable(QString("SettingsManager::updateUi(%1)").arg(_pName)),
-             "No such page");
-  
-  QSettings s;
-  s.beginGroup("Settings");
-  vApp()->settingsManager()->__getPage(_pName)->restoreSettings(s);
-  s.endGroup();
+  AbstractSettingsModule* page = vApp()->settingsManager()->__getPage(_pName);
+  if (page) {
+    QSettings s;
+    s.beginGroup("Settings");
+    vApp()->settingsManager()->__getPage(_pName)->restoreSettings(s);
+    s.endGroup();
+  }
 }
 
 void

@@ -19,6 +19,7 @@
 
 #include <QQuickView>
 
+#include "events/decisionevent.h"
 #include "ui/quick/map.h"
 
 #include "quickuserinterface.h"
@@ -83,3 +84,11 @@ void
 QuickUserInterface::showMetar(const QString&) {
 
 }
+
+void
+QuickUserInterface::showStatsDialog() {
+  // enable stats anyway temporarily
+  DecisionEvent* e = new DecisionEvent("statistics", DecisionEvent::Accepted);
+  QCoreApplication::postEvent(vApp(), e);
+}
+

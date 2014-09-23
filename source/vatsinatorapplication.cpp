@@ -118,7 +118,11 @@ VatsinatorApplication::event(QEvent* _event) {
     userDecisionEvent(static_cast<DecisionEvent*>(_event));
     return true;
   } else {
+#ifndef Q_OS_ANDROID
     return QApplication::event(_event);
+#else
+    return QGuiApplication::event(_event);
+#endif
   }
 }
 
