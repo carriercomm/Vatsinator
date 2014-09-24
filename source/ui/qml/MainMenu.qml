@@ -39,7 +39,7 @@ Item {
   /* Menu container shadow */
   RectangularGlow {
     anchors.fill: container
-    glowRadius: 15.0
+    glowRadius: 25.0
     color: "#262626"
     cornerRadius: 0
   }
@@ -49,16 +49,26 @@ Item {
     id: menuListDelegate
     Rectangle {
       width: menuList.width
-      height: 120 /* TODO DPI-independent value */
+      height: 150 /* TODO DPI-independent value */
       
       color: mouse.pressed ? "#3E3E3E" : container.color
       
-      Text {
+      Row {
+        anchors.fill: parent
         anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 60 /* TODO DPI-independent value */
-        color: "#E5E5E5"
-        text: name
+        anchors.leftMargin: 60
+        spacing: 30
+        
+        Image {
+          source: icon
+          anchors.verticalCenter: parent.verticalCenter
+        }
+      
+        Text {
+          anchors.verticalCenter: parent.verticalCenter
+          color: "#E5E5E5"
+          text: name
+        }
       }
       
       MouseArea {
@@ -79,12 +89,12 @@ Item {
     
     anchors.fill: parent
     anchors.rightMargin: parent.width * 0.1
-    color: "#262626"
+    color: "#363636"
     
     ListView {
       id: menuList
       anchors.fill: parent
-      anchors.margins: 10
+      anchors.topMargin: 30
       
       model: MenuModel {}
       delegate: menuListDelegate

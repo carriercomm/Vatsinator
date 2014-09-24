@@ -21,22 +21,32 @@ import QtQuick 2.2
 
 ListModel {
   ListElement {
+    name: "Refresh"
+    icon: "images/ic_action_refresh.png"
+  }
+  
+  ListElement {
     name: "Fights"
+    icon: "images/ic_action_flights.png"
   }
   
   ListElement {
     name: "Controllers"
+    icon: "images/ic_action_atc.png"
   }
   
   ListElement {
     name: "Airports"
+    icon: "images/ic_action_airports.png"
   }
   
   ListElement {
     name: "Settings"
+    icon: "images/ic_action_settings.png"
   }
   
   ListElement {
     name: "About"
+    icon: "images/ic_action_about.png"
   }
 }

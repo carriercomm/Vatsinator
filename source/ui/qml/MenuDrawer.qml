@@ -53,7 +53,7 @@ Item {
       width: 48
       height: 48
       fillMode: Image.Stretch
-      source: "ic_drawer.png"
+      source: "images/ic_drawer.png"
       anchors.centerIn: parent
     }
   }
