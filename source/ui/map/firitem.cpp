@@ -97,12 +97,21 @@ FirItem::drawItem(QOpenGLShaderProgram* _shader) const {
   static constexpr float FirsZ = static_cast<float>(MapConfig::MapLayers::StaffedFirs + 1);
   
   static const GLfloat labelRect[] = {
+#ifdef Q_OS_ANDROID
+    -0.16f, -0.10666666f,
+    -0.16f,  0.10666666f,
+     0.16f,  0.10666666f,
+     0.16f,  0.10666666f,
+     0.16f, -0.10666666f,
+    -0.16f, -0.10666666f
+#else
     -0.08f, -0.05333333f,
     -0.08f,  0.05333333f,
      0.08f,  0.05333333f,
      0.08f,  0.05333333f,
      0.08f, -0.05333333f,
     -0.08f, -0.05333333f
+#endif
   };
   
   static const GLfloat textureCoords[] = {
@@ -214,7 +223,11 @@ FirItem::__initializeBuffers() {
 
 void
 FirItem::__initializeLabel() const {
+#ifdef Q_OS_ANDROID
+  static QRect labelRect(0, 8, 128, 48);
+#else
   static QRect labelRect(0, 4, 64, 24);
+#endif
   
   if (__label.isCreated())
     __label.destroy();

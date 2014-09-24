@@ -79,7 +79,11 @@ MapConfig::airportLabelBackground() {
 
 const QImage &
 MapConfig::firLabelBackground() {
+#ifdef Q_OS_ANDROID
+  static QImage label(128, 64, QImage::Format_ARGB32_Premultiplied);
+#else
   static QImage label(64, 32, QImage::Format_ARGB32_Premultiplied);
+#endif
   static bool filled = false;
   if (!filled) {
     label.fill(0);
