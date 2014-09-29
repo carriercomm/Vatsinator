@@ -1,5 +1,5 @@
 /*
- * MenuModel.qml
+ * MenuListDelegate.qml
  * Copyright (C) 2014  Michał Garapich <michal@garapich.pl>
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -17,37 +17,39 @@
  * 
  */
 
-import QtQuick 2.2
+import QtQuick 2.3
 
-ListModel {
-  ListElement {
-    name: "Refresh"
-    icon: "images/ic_menu_refresh.png"
+Rectangle {
+  id: root
+  
+  signal clicked
+  
+  width: parent.width
+  height: 150 /* TODO DPI-independent value */
+  
+  color: mouse.pressed ? "#3E3E3E" : container.color
+  
+  Row {
+    anchors.fill: parent
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.leftMargin: 60
+    spacing: 30
+    
+    Image {
+      source: icon
+      anchors.verticalCenter: parent.verticalCenter
+    }
+  
+    Text {
+      anchors.verticalCenter: parent.verticalCenter
+      color: "#E5E5E5"
+      text: name
+    }
   }
   
-  ListElement {
-    name: "Flights"
-    icon: "images/ic_menu_flights.png"
-  }
-  
-  ListElement {
-    name: "Controllers"
-    icon: "images/ic_menu_atc.png"
-  }
-  
-  ListElement {
-    name: "Airports"
-    icon: "images/ic_menu_airports.png"
-  }
-  
-  ListElement {
-    name: "Settings"
-    icon: "images/ic_menu_settings.png"
-  }
-  
-  ListElement {
-    name: "About"
-    icon: "images/ic_menu_about.png"
-    page: "AboutDialog.qml"
+  MouseArea {
+    id: mouse
+    anchors.fill: parent
+    onClicked: root.clicked()
   }
 }

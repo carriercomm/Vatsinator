@@ -20,7 +20,6 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import org.eu.vatsinator.ui 1.0
 
 ApplicationWindow {
   id: vatsinatorWindow
@@ -29,53 +28,24 @@ ApplicationWindow {
   title: "Vatsinator"
   width: 320
   
-  Loader {
-    id: loader
+  property Component mapPage : MapPage {
+    onClicked: stackView.push(Qt.resolvedUrl(page))
   }
   
-  Map {
-    id: map
-  }
-  
-  /* Semi-transparent background */
-  Rectangle {
+  StackView {
+    id: stackView
     anchors.fill: parent
-    color: "#262626"
-    opacity: (mainMenu.swipe / parent.width) * 0.8
-  }
-  
-  Row {
-    anchors.fill: parent
+    focus: true
     
-    SwipeHandler {
-      width: parent.width / 20
-      height: parent.height
-      
-      onSwipeEnded: mainMenu.toggleState()
-      onSwipeContinues: mainMenu.swipe += diffX
+    /* Implements back key navigation */
+    Keys.onReleased: {
+      if (event.key === Qt.Key_Back && stackView.depth > 1) {
+        stackView.pop();
+        event.accepted = true;
+      }
     }
     
-    MapControls {
-      width: (parent.width / 20) * 19
-      height: parent.height
-      
-      onZoomUpdated: map.updateZoom(zoom)
-      onPositionUpdated: map.updatePosition(x, y)
-    }
-  }
-  
-  MenuDrawer {
-    id: menuDrawer
-    
-    anchors {
-      left: parent.left
-      bottom: parent.bottom
-      bottomMargin: parent.height / 20
-    }
-  }
-  
-  MainMenu {
-    id: mainMenu
+    initialItem: mapPage
   }
   
   Component.onCompleted: visible = true

@@ -23,6 +23,8 @@ import QtGraphicalEffects 1.0
 Item {
   id: root
   
+  signal clicked(url page)
+  
   property int swipe: 0
   
   width: parent.width
@@ -44,45 +46,6 @@ Item {
     cornerRadius: 0
   }
   
-  /* Menu list delegate */
-  Component {
-    id: menuListDelegate
-    Rectangle {
-      width: menuList.width
-      height: 150 /* TODO DPI-independent value */
-      
-      color: mouse.pressed ? "#3E3E3E" : container.color
-      
-      Row {
-        anchors.fill: parent
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.leftMargin: 60
-        spacing: 30
-        
-        Image {
-          source: icon
-          anchors.verticalCenter: parent.verticalCenter
-        }
-      
-        Text {
-          anchors.verticalCenter: parent.verticalCenter
-          color: "#E5E5E5"
-          text: name
-        }
-      }
-      
-      MouseArea {
-        id: mouse
-        
-        anchors.fill: parent
-        onClicked: {
-          /* TODO handle clicked */
-          console.log(name + " clicked")
-        }
-      }
-    }
-  }
-  
   /* Menu container */
   Rectangle {
     id: container
@@ -97,7 +60,12 @@ Item {
       anchors.topMargin: 30
       
       model: MenuModel {}
-      delegate: menuListDelegate
+      delegate: MenuListDelegate {
+        onClicked: {
+          if (page)
+            root.clicked(page);
+        }
+      }
     }
   }
   

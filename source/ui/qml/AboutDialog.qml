@@ -17,12 +17,14 @@
  * 
  */
 
-import QtQuick 2.2
-import QtQuick.Dialogs 1.1
+import QtQuick 2.3
 
-// TODO mage this something different that MessageDialog
-// dunno what yet
-MessageDialog {
-  title: qsTr("About Vatsinator")
-  text: qsTr("Vatsinator is an open-source Vatsim network monitor.")
+Rectangle {
+  width: parent.width
+  height: parent.height
+  
+  Text {
+    text: qsTr("About Vatsinator")
+    anchors.centerIn: parent
+  }
 }
