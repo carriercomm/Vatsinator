@@ -28,56 +28,60 @@
 
 class QNetworkReply;
 
-/*
- * Use this class to download files from the internet.
+/**
+ * The FileDownloader class is a convenience class that simplfies
+ * downloading files from the internet.
  */
 class FileDownloader : public QObject {
   Q_OBJECT
 
 signals:
-  
   /**
    * Emited when download is complete.
-   * @param fileName Location of the downloaded file.
+   * 
+   * \param fileName Location of the downloaded file.
    */
-  void finished(QString);
+  void finished(QString fileName);
   
   /**
    * Emited when an error occurs.
-   * @param erStr Error string.
+   * \param error Error string.
    */
-  void error(QString);
+  void error(QString error);
   
 public:
   /**
    * Creates new FileDownloader instance.
    */
-  FileDownloader(QObject* = 0);
+  FileDownloader(QObject* parent = nullptr);
   
   /**
    * If the requests queue is empty, downloads the given file
    * immediately. Otherwise, enqueues the url.
    */
-  void fetch(const QUrl&);
+  void fetch(const QUrl& url);
   
   /**
    * Generates the temporary file name (with the absolute path)
    * from the given url.
+   * 
+   * \todo Move to private scope.
    */
-  QString fileNameForUrl(const QUrl&);
+  QString fileNameForUrl(const QUrl& url);
   
   /**
-   * Returns true if there are any queries scheduled.
+   * Returns true if there are any queries left in the queue.
    */
-  inline bool anyTasksLeft() const { return !__urls.isEmpty(); }
-
+  inline bool hasPendingTasks() const { return !__urls.isEmpty(); }
+  
+private:
+  void __startRequest();
+  
 private slots:
   void __readyRead();
   void __finished();
   
 private:
-  void __startRequest();
-  
   QQueue<QUrl>   __urls;
   QFile          __output;
   

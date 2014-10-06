@@ -45,11 +45,11 @@
 
 #include "vatsinatorapplication.h"
 
-VatsinatorApplication::VatsinatorApplication(int& _argc, char** _argv) :
+VatsinatorApplication::VatsinatorApplication(int& argc, char** argv) :
 #ifndef Q_OS_ANDROID
-    QApplication(_argc, _argv),
+    QApplication(argc, argv),
 #else
-    QGuiApplication(_argc, _argv),
+    QGuiApplication(argc, argv),
 #endif
     __userInterface(new VATSINATOR_UI_IMPLEMENTATION()),
     __fileManager(new FileManager()),
@@ -113,25 +113,16 @@ VatsinatorApplication::~VatsinatorApplication() {
 }
 
 bool
-VatsinatorApplication::event(QEvent* _event) {
-  if (_event->type() == Event::Decision) {
-    userDecisionEvent(static_cast<DecisionEvent*>(_event));
+VatsinatorApplication::event(QEvent* event) {
+  if (event->type() == Event::Decision) {
+    userDecisionEvent(static_cast<DecisionEvent*>(event));
     return true;
   } else {
 #ifndef Q_OS_ANDROID
-    return QApplication::event(_event);
+    return QApplication::event(event);
 #else
-    return QGuiApplication::event(_event);
+    return QGuiApplication::event(event);
 #endif
-  }
-}
-
-void
-VatsinatorApplication::userDecisionEvent(DecisionEvent* _event) {
-  if (_event->context() == QStringLiteral("statistics")) {
-    statsPurveyor()->setUserDecision(
-      _event->decision() == DecisionEvent::Accepted ? StatsPurveyor::Accepted : StatsPurveyor::Declined
-    );
   }
 }
 
@@ -142,12 +133,22 @@ VatsinatorApplication::restart() {
   QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }
 
+
+void
+VatsinatorApplication::userDecisionEvent(DecisionEvent* event) {
+  if (event->context() == QStringLiteral("statistics")) {
+    statsPurveyor()->setUserDecision(
+      event->decision() == DecisionEvent::Accepted ? StatsPurveyor::Accepted : StatsPurveyor::Declined
+    );
+  }
+}
+
 void
 VatsinatorApplication::__initialize() {
   qDebug("VatsinatorApplication: initializing");
   
   /* Read world map before UI */
-  __worldMap->init();
+  __worldMap->initialize();
   
   /* Create windows */
   __userInterface->initialize();

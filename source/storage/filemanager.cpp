@@ -36,24 +36,24 @@ FileManager::FileManager() {
 }
 
 void
-FileManager::cacheData(const QString& _fileName, const QString& _data) {
-  CacheFile cache(_fileName);
+FileManager::cacheData(const QString& fileName, const QString& data) {
+  CacheFile cache(fileName);
   cache.open(QIODevice::WriteOnly | QIODevice::Truncate);
-  cache.write(_data.toUtf8());
+  cache.write(data.toUtf8());
   cache.close();
 }
 
 bool
-FileManager::moveToCache(const QString& _source, const QString& _destination) {
-  QFile file(_source);
+FileManager::moveToCache(const QString& source, const QString& destination) {
+  QFile file(source);
   if (!file.open(QIODevice::ReadWrite)) {
-    qWarning("FileManager: failed to access file %s", qPrintable(_source));
+    qWarning("FileManager: failed to access file %s", qPrintable(source));
     return false;
   }
   
   file.close();
   
-  CacheFile oldCache(_destination);
+  CacheFile oldCache(destination);
   QFileInfo info(oldCache);
   QDir(info.path()).mkpath(".");
   
@@ -62,16 +62,16 @@ FileManager::moveToCache(const QString& _source, const QString& _destination) {
   
   bool result = file.rename(oldCache.fileName());
   if (result)
-    qDebug("FileManager: cached file %s", qPrintable(_destination));
+    qDebug("FileManager: cached file %s", qPrintable(destination));
   else
-    qWarning("FileManager: failed caching file %s", qPrintable(_destination));
+    qWarning("FileManager: failed caching file %s", qPrintable(destination));
   
   return result;
 }
 
 QString
-FileManager::staticPath(FileManager::StaticDir _d) {
-  switch (_d) {
+FileManager::staticPath(FileManager::StaticDir directory) {
+  switch (directory) {
     case Plugins:
 #if defined Q_OS_ANDROID
       return QStringLiteral("assets:/plugins");
@@ -96,21 +96,20 @@ FileManager::staticPath(FileManager::StaticDir _d) {
 }
 
 QString
-FileManager::path(const QString& _f) {
-  
-  QFile tryLocal(localDataPath() % _f);
+FileManager::path(const QString& fileName) {
+  QFile tryLocal(localDataPath() % fileName);
   if (tryLocal.exists()) {
     qDebug("FileManager: file %s loaded from %s.",
-           qPrintable(_f), qPrintable(tryLocal.fileName()));
+           qPrintable(fileName), qPrintable(tryLocal.fileName()));
     return tryLocal.fileName();
   } else {
     return
 #if defined Q_OS_ANDROID
-      QStringLiteral("assets:/") % _f;
+      QStringLiteral("assets:/") % fileName;
 #elif defined Q_OS_DARWIN // on MacOS look for the file in the bundle
-      QCoreApplication::applicationDirPath() % QStringLiteral("/../Resources/") % _f;
+      QCoreApplication::applicationDirPath() % QStringLiteral("/../Resources/") % fileName;
 #else 
-      QStringLiteral(VATSINATOR_PREFIX) % _f;
+      QStringLiteral(VATSINATOR_PREFIX) % fileName;
 #endif
   }
 }

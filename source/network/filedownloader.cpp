@@ -23,21 +23,21 @@
 
 #include "filedownloader.h"
 
-FileDownloader::FileDownloader(QObject* _parent) :
-    QObject(_parent),
+FileDownloader::FileDownloader(QObject* parent) :
+    QObject(parent),
     __reply(nullptr) {}
 
 void
-FileDownloader::fetch(const QUrl& _url) {
-  __urls.enqueue(_url);
+FileDownloader::fetch(const QUrl& url) {
+  __urls.enqueue(url);
   
   if (!__reply)
     __startRequest();
 }
 
 QString
-FileDownloader::fileNameForUrl(const QUrl& _url) {
-  QString baseName = QFileInfo(_url.path()).fileName();
+FileDownloader::fileNameForUrl(const QUrl& url) {
+  QString baseName = QFileInfo(url.path()).fileName();
   
   Q_ASSERT(!baseName.isEmpty());
   
@@ -50,7 +50,7 @@ FileDownloader::fileNameForUrl(const QUrl& _url) {
   
   QString absPath = QDir::tempPath() % "/" % baseName;
   
-  qDebug("FileDownloader: file %s will be downloaded to: %s", qPrintable(_url.toString()), qPrintable(absPath));
+  qDebug("FileDownloader: file %s will be downloaded to: %s", qPrintable(url.toString()), qPrintable(absPath));
   
   if (QFile::exists(absPath))
     QFile(absPath).remove();
@@ -60,7 +60,7 @@ FileDownloader::fileNameForUrl(const QUrl& _url) {
 
 void
 FileDownloader::__startRequest() {
-  if (__reply || !anyTasksLeft())
+  if (__reply || !hasPendingTasks())
     return;
   
   QUrl url = __urls.dequeue();

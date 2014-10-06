@@ -1,6 +1,6 @@
 /*
     plaintextdownloader.h
-    Copyright (C) 2012-2013  Michał Garapich michal@garapich.pl
+    Copyright (C) 2012-2014  Michał Garapich michal@garapich.pl
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,50 +28,79 @@
 
 class QProgressBar;
 
+/**
+ * The PlainTextDownloader is used to download files directly into memory.
+ * 
+ * \todo Create progress signal.
+ */
 class PlainTextDownloader : public QObject {
-  
-  /*
-   * Handles http queries. Receives plain text.
-   */
-
   Q_OBJECT
 
 signals:
-  void finished(QString);
+  /**
+   * Emitted when download is complete.
+   * 
+   * \param data The fetch file content.
+   */
+  void finished(QString data);
+  
+  /**
+   * Emitted if a network error occured during the download process.
+   */
   void error();
+  
+  /**
+   * Emitted when user aborts the download.
+   */
   void aborted();
 
 public:
+  /**
+   * \todo Remove pb.
+   * 
+   * \param parent Passed to QObject.
+   */
+  PlainTextDownloader(QObject* parent = nullptr);
 
-  PlainTextDownloader(QObject* = 0);
-
-  void fetchData(const QString&);
+  /**
+   * Enqueues the request.
+   * If the queue is empty, the specified URL will be downloaded immediately.
+   * 
+   * \param url URL to be downloaded.
+   */
+  void fetch(const QUrl& url);
   
   /**
-   * Available only on desktop.
+   * \deprecated
+   * Sets the given progress bar.
    */
-  inline QProgressBar *
-  progressBar() { return __progressBar; }
+  void setProgressBar(QProgressBar* pb);
   
   /**
-   * Available only on desktop.
+   * The progress bar to be updated on readyRead().
    */
-  inline const QProgressBar *
-  progressBar() const { return __progressBar; }
+  inline QProgressBar* progressBar() { return __progressBar; }
   
   /**
-   * Available only on desktop.
+   * The progress bar to be updated on readyRead().
    */
-  inline void
-  setProgressBar(QProgressBar* _pb) { __progressBar = _pb; }
+  inline const QProgressBar* progressBar() const { return __progressBar; }
   
-  inline bool
-  anyTasksLeft() const { return !__urls.isEmpty(); }
+  /**
+   * Returns false if the queue is empty, otherwise true.
+   */
+  inline bool hasPendingTasks() const { return !__urls.isEmpty(); }
   
-  inline bool
-  isWorking() const { return __reply != nullptr; }
+  /**
+   * Returns true if anything is being downloaded.
+   */
+  inline bool isWorking() const { return __reply != nullptr; }
   
 public slots:
+  /**
+   * Aborts the download.
+   * If the queue is not empty, new request will be started immediately.
+   */
   void abort();
 
 private:
@@ -80,7 +109,7 @@ private:
 private slots:
   void __readyRead();
   void __finished();
-  void __updateProgress(qint64, qint64);
+  void __updateProgress(qint64 read, qint64 total);
   
 private:
   QProgressBar*   __progressBar;

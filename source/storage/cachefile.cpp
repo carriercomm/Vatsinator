@@ -23,9 +23,9 @@
 
 #include "cachefile.h"
 
-CacheFile::CacheFile(const QString& _fileName) :
-    QFile(FileManager::cachePath() % _fileName) {
-  qDebug("Cache file location: %s", qPrintable(fileName()));
+CacheFile::CacheFile(const QString& fileName) :
+    QFile(FileManager::cachePath() % QDir::separator() % fileName) {
+  qDebug("Cache file location: %s", qPrintable(fileName));
 }
 
 bool
@@ -40,11 +40,11 @@ CacheFile::exists() const {
 }
 
 bool
-CacheFile::open(OpenMode _mode) {
+CacheFile::open(OpenMode mode) {
   if (!QDir(FileManager::cachePath()).exists())
     QDir().mkpath(FileManager::cachePath());
   
-  bool wasOpened = QFile::open(_mode);
+  bool wasOpened = QFile::open(mode);
   if (!wasOpened)
     qWarning("CacheFile: %s failed to open.", qPrintable(fileName()));
   
