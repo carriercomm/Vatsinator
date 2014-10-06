@@ -92,3 +92,7 @@ QuickUserInterface::showStatsDialog() {
   QCoreApplication::postEvent(vApp(), e);
 }
 
+void
+QuickUserInterface::ensureMainWindowIsActive() {
+
+}
