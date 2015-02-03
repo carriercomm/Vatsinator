@@ -175,9 +175,13 @@ elseif (ANDROID)
             ${QtXml_location}
             ${QtQuick_location}
             ${QtQml_location}
-            ${QUAZIP_LIBRARIES}
             DESTINATION libs/${ANDROID_ABI}
         )
+    
+    get_filename_component (_quazip_fname ${QUAZIP_LIBRARIES} NAME)
+    get_filename_component (_quazip_realpath ${QUAZIP_LIBRARIES} REALPATH)
+    
+    install (FILES ${_quazip_realpath} DESTINATION libs/${ANDROID_ABI} RENAME ${_quazip_fname})
     
 endif (LINUX)
 

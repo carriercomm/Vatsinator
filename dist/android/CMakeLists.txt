@@ -66,8 +66,6 @@ install_android_qt_plugins (
   generic/libqevdevmouseplugin.so
   generic/libqevdevtabletplugin.so
   generic/libqevdevtouchplugin.so
-  accessible/libqtaccessiblequick.so
-  accessible/libqtaccessiblewidgets.so
   qmltooling/libqmldbg_qtquick2.so
   qmltooling/libqmldbg_tcp.so
 )
@@ -94,7 +92,7 @@ install_android_qt_jars(
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/libs.xml.in ${CMAKE_CURRENT_BINARY_DIR}/res/values/libs.xml @ONLY)
 
 if (${ANDROID_STL} MATCHES "gnustl*")
-  install (FILES ${ANDROID_NDK}/sources/cxx-stl/gnu-libstdc++/4.8/libs/${ANDROID_ABI}/libgnustl_shared.so
+  install (FILES ${ANDROID_NDK}/sources/cxx-stl/gnu-libstdc++/4.9/libs/${ANDROID_ABI}/libgnustl_shared.so
     DESTINATION libs/${ANDROID_ABI})
 endif (${ANDROID_STL} MATCHES "gnustl*")
 

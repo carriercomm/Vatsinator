@@ -60,9 +60,11 @@ SettingsManager::get(const QString& s) {
 
 void
 SettingsManager::updateUi(const QString& pageName) {
-  Q_ASSERT_X(vApp()->settingsManager()->__getPage(pageName),
-             qPrintable(QString("SettingsManager::updateUi(%1)").arg(pageName)),
-             "No such page");
+//   Q_ASSERT_X(vApp()->settingsManager()->__getPage(pageName),
+//              qPrintable(QString("SettingsManager::updateUi(%1)").arg(pageName)),
+//              "No such page");
+  if (!vApp()->settingsManager()->__getPage(pageName))
+    return;
   
   QSettings s;
   s.beginGroup("Settings");
