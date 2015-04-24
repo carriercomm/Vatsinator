@@ -55,10 +55,7 @@ public:
   
   /**
    * Renders a map.
-   * 
-   * The OpenGL state at the time of calling is as follows:
-   * * _shader_ is bound,
-   * * 
+   * TODO Fill doc here
    */
   virtual void draw(const QRectF& screen, qreal zoom) = 0;
   
