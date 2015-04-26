@@ -38,7 +38,6 @@ class SettingsManager;
 class StatsPurveyor;
 class UserInterface;
 class VatsimDataHandler;
-class WorldMap;
 
 /**
  * The VatsinatorApplication wraps the whole Vatsinator instance
@@ -140,14 +139,6 @@ public:
   }
   
   /**
-   * Gets the WorldMap instance.
-   */
-  inline WorldMap* worldMap() {
-    Q_ASSERT(__worldMap);
-    return __worldMap;
-  }
-  
-  /**
    * Gets the LanguageManager instance.
    */
   inline LanguageManager* languageManager() {
@@ -186,7 +177,6 @@ private:
   AirlineDatabase*     __airlineDatabase;
   AirportDatabase*     __airportDatabaase;
   FirDatabase*         __firDatabase;
-  WorldMap*            __worldMap;
   VatsimDataHandler*   __vatsimData;
   LanguageManager*     __languageManager;
   ResourceManager*     __resourceManager;
